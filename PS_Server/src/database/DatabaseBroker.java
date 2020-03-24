@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package database;
 
 import controller.Controller;
@@ -10,8 +5,6 @@ import domain.DomainObject;
 import domain.Klijent;
 import domain.Radnik;
 
-import javax.sql.ConnectionPoolDataSource;
-import javax.sql.DataSource;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.*;
@@ -23,7 +16,6 @@ import java.util.ResourceBundle;
 /**
  * @author nikol
  */
-
 /**
  * Provide communication between application and database.
  */
@@ -47,10 +39,11 @@ public class DatabaseBroker {
     }
 
     /**
-     * Method for making connection between application and database without parameters.
+     * Method for making connection between application and database without
+     * parameters.
      *
-     * @throws SQLException           if problems with connection to database arise.
-     * @throws IOException            if streams are not open.
+     * @throws SQLException if problems with connection to database arise.
+     * @throws IOException if streams are not open.
      * @throws ClassNotFoundException if driver for database isn't installed.
      */
     public void connect() throws SQLException, IOException, ClassNotFoundException {
@@ -139,8 +132,8 @@ public class DatabaseBroker {
 
     public DomainObject loginWorker(String username, String password) throws Exception {
         try {
-            String query = "SELECT sifraRadnika, imeRadnika, prezimeRadnika, adresa, telefon, JMBG, administrator, " +
-                    "username, password FROM radnik WHERE username = ? AND password = ?";
+            String query = "SELECT sifraRadnika, imeRadnika, prezimeRadnika, adresa, telefon, JMBG, administrator, "
+                    + "username, password FROM radnik WHERE username = ? AND password = ?";
             PreparedStatement statement = connection.prepareStatement(query);
 
             statement.setString(1, username);
@@ -190,8 +183,8 @@ public class DatabaseBroker {
 
     public DomainObject updateDomainObject(DomainObject odo) throws Exception {
         try {
-            String query = "UPDATE " + odo.getTableName() + " SET " + odo.getAttributesForUpdate() +
-                    "WHERE " + odo.getIdentifierName() + " = " + odo.getObjectId();
+            String query = "UPDATE " + odo.getTableName() + " SET " + odo.getAttributesForUpdate()
+                    + "WHERE " + odo.getIdentifierName() + " = " + odo.getObjectId();
 
             Statement statement = connection.createStatement();
             statement.executeUpdate(query);
@@ -206,8 +199,8 @@ public class DatabaseBroker {
     public List<DomainObject> searchCustomer(String criteria) throws Exception {
 
         try {
-            String query = "SELECT * FROM klijent WHERE imeKlijenta LIKE '" + criteria +
-                    "' OR prezimeKlijenta LIKE '" + criteria + "' OR sifraKlijenta = '" + criteria + "'";
+            String query = "SELECT * FROM klijent WHERE imeKlijenta LIKE '" + criteria
+                    + "' OR prezimeKlijenta LIKE '" + criteria + "' OR sifraKlijenta = '" + criteria + "'";
 
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(query);

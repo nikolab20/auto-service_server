@@ -5,7 +5,6 @@
  */
 package controller;
 
-
 import domain.DomainObject;
 import domain.Klijent;
 import logic.*;
@@ -24,15 +23,14 @@ import java.util.Properties;
 /**
  * @author nikol
  */
-
 /**
  * Provides methods for controlling the logic of a server application.
  */
 public class Controller {
 
     /**
-     * The instance of the controller class.
-     * The instance created on this site ensures its uniqueness for the whole project.
+     * The instance of the controller class. The instance created on this site
+     * ensures its uniqueness for the whole project.
      *
      * @return the instance of the controller class.
      */
@@ -50,9 +48,11 @@ public class Controller {
     private Locale locale;
 
     /**
-     * A logical value that represents whether the server is set to the default configuration or not.
+     * A logical value that represents whether the server is set to the default
+     * configuration or not.
      *
-     * @param defaultConfig is the boolean value for the attribute defaultConfig of this class.
+     * @param defaultConfig is the boolean value for the attribute defaultConfig
+     * of this class.
      * @return the boolean value.
      */
     @Getter
@@ -69,11 +69,12 @@ public class Controller {
     /**
      * Method for reading a data from properties file.
      *
-     * @return An object of the {@link Properties} class that contains data from a file.
+     * @return An object of the {@link Properties} class that contains data from
+     * a file.
      * @throws IOException if file doesn't exist.
      */
     public Properties readPropertiesFile() throws IOException {
-        FileInputStream in = new FileInputStream("conn.properties");
+        FileInputStream in = new FileInputStream("props/conn.properties");
         Properties props = new Properties();
         props.load(in);
 
@@ -81,14 +82,13 @@ public class Controller {
     }
 
     /**
-     * Method for initially adjusting the form.
+     * Method for initial adjusting the form.
      *
-     * @param form      is the form tuned by this method.
+     * @param form is the form tuned by this method.
      * @param mainPanel is the content panel of this form.
      */
-    public void defaultPrepareForm(JFrame form, JPanel mainPanel, Dimension dimension) {
+    public void defaultPrepareForm(JFrame form, Dimension dimension) {
         form.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        form.setContentPane(mainPanel);
         form.setPreferredSize(dimension);
         form.pack();
         form.setLocationRelativeTo(null);
@@ -100,7 +100,7 @@ public class Controller {
     /**
      * Method for putting icon on label.
      *
-     * @param file  is the image file for the icon.
+     * @param file is the image file for the icon.
      * @param label is the label on which the method places the icon.
      */
     public void setIconToLabel(String file, JLabel label) {
@@ -110,12 +110,24 @@ public class Controller {
     }
 
     /**
+     * Method for putting icon on button.
+     *
+     * @param file is the image file for the icon.
+     * @param button is the button on which the method places the icon.
+     */
+    public void setIconToButton(String file, JButton button) {
+        URL imageUrl = ClassLoader.getSystemResource(file);
+        ImageIcon imageIcon = new ImageIcon(imageUrl);
+        button.setIcon(imageIcon);
+    }
+
+    /**
      * Method for putting data into properties file.
      *
-     * @param serverPort       is String that represents port for server.
-     * @param driverDatabase   is String that represents database driver.
-     * @param urlDatabase      is String that represents database url.
-     * @param userDatabase     is String that represents database username.
+     * @param serverPort is String that represents port for server.
+     * @param driverDatabase is String that represents database driver.
+     * @param urlDatabase is String that represents database url.
+     * @param userDatabase is String that represents database username.
      * @param passwordDatabase is String that represents database password.
      * @throws IOException if file doesn't exist.
      */

@@ -32,12 +32,13 @@ public class ServerThread extends Thread {
      */
     public ServerThread() throws IOException {
         Properties props = Controller.getInstance().readPropertiesFile();
-        serverSocket = new ServerSocket(Integer.parseInt(props.getProperty("default_serverPort")));
+        int port = Integer.parseInt(props.getProperty("default_serverPort"));
 
         if (!Controller.getInstance().isDefaultConfig()) {
-            serverSocket = new ServerSocket(Integer.parseInt(props.getProperty("serverPort")));
+            port = Integer.parseInt(props.getProperty("serverPort"));
         }
 
+        serverSocket = new ServerSocket(port);
         clients = new ArrayList<>();
     }
 
