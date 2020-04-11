@@ -102,6 +102,9 @@ public class ClientHandlerThread extends Thread {
                     case Operation.OPERATION_INSERT_LIST:
                         response = operationInsertListOfDomainObject(request);
                         break;
+                    case Operation.OPERATION_SEARCH_BILL:
+                        response = operationSearchBill(request);
+                        break;
                 }
                 sendResponse(response);
             } catch (Exception ex) {
@@ -358,6 +361,22 @@ public class ClientHandlerThread extends Thread {
             response = new ResponseObject();
             Controller.getInstance().insertListOfDomainObject(listOdo);
             response.setData(listOdo);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            response.setException(ex);
+        }
+
+        return response;
+    }
+
+    private ResponseObject operationSearchBill(RequestObject request) {
+        ResponseObject response = null;
+        String criteria = (String) request.getData();
+
+        try {
+            response = new ResponseObject();
+            List<DomainObject> bills = Controller.getInstance().searchBill(criteria);
+            response.setData(bills);
         } catch (Exception ex) {
             ex.printStackTrace();
             response.setException(ex);

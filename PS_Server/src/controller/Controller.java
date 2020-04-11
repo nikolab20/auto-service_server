@@ -290,4 +290,10 @@ public class Controller {
         SystemOperation so = new SOInsertListOfDomainObject(listOdo);
         so.execute();
     }
+
+    public List<DomainObject> searchBill(String criteria) throws Exception {
+        SystemOperation so = new SOSearchBill(criteria);
+        so.execute();
+        return so.getListDomainObject();
+    }
 }

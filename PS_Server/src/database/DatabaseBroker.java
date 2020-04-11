@@ -6,6 +6,7 @@ import domain.DomainObject;
 import domain.Klijent;
 import domain.PoreskaStopa;
 import domain.PredmetProdaje;
+import domain.Racun;
 import domain.Radnik;
 import domain.Usluga;
 
@@ -18,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author nikol
@@ -130,7 +133,7 @@ public class DatabaseBroker {
         }
     }
 
-    public DomainObject loginWorker(String username, String password) throws Exception {
+    public synchronized DomainObject loginWorker(String username, String password) throws Exception {
         try {
             String query = "SELECT sifraRadnika, imeRadnika, prezimeRadnika, adresa, telefon, JMBG, administrator, "
                     + "username, password FROM radnik WHERE username = ? AND password = ?";
@@ -181,7 +184,7 @@ public class DatabaseBroker {
         }
     }
 
-    public DomainObject updateDomainObject(DomainObject odo) throws Exception {
+    public synchronized DomainObject updateDomainObject(DomainObject odo) throws Exception {
         try {
             String query = "UPDATE " + odo.getTableName() + " SET "
                     + odo.getAttributesForUpdate() + " WHERE " + odo.getIdentifierName()
@@ -256,7 +259,7 @@ public class DatabaseBroker {
         }
     }
 
-    public DomainObject deleteDomainObject(DomainObject odo) throws Exception {
+    public synchronized DomainObject deleteDomainObject(DomainObject odo) throws Exception {
         try {
             String query = "DELETE FROM " + odo.getTableName() + " WHERE "
                     + odo.getIdentifierName() + " = " + odo.getObjectId();
@@ -408,7 +411,7 @@ public class DatabaseBroker {
         }
     }
 
-    public DomainObject searchObjectOfSale(Long criteria) throws Exception {
+    public synchronized DomainObject searchObjectOfSale(Long criteria) throws Exception {
         try {
             String query = "SELECT pp.sifraPredmetaProdaje as 'pp_sifra', pp.cena as 'pp_cena', pp.cenaSaPorezom as 'pp_cenaSaP', "
                     + "pp.id as 'pp_id', ps.id as 'ps_id', ps.oznaka as 'ps_oznaka', ps.vrednost as 'ps_vrednost' FROM predmetProdaje pp JOIN"
@@ -437,7 +440,7 @@ public class DatabaseBroker {
         }
     }
 
-    public Map<Object, Object> getAllObjectOfSaleWithNames(String criteria) throws Exception {
+    public synchronized Map<Object, Object> getAllObjectOfSaleWithNames(String criteria) throws Exception {
         try {
             String query = "SELECT p.sifraPredmetaProdaje AS 'ID', p.`cena` AS 'Cena', "
                     + "p.cenaSaPorezom AS 'Cena_sa_porezom', p.id AS 'Porez_ID', "
@@ -499,6 +502,59 @@ public class DatabaseBroker {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new Exception();
+        }
+    }
+
+    public List<DomainObject> searchBill(String criteria) throws Exception {
+        try {
+            String query = "SELECT r.brojRacuna, r.datumIzdavanja, r.ukupnaVrednost,"
+                    + " r.ukupnaVrednostSaPorezom, r.obradjen, r.storniran, ra.sifraRadnika, "
+                    + "ra.imeRadnika, ra.PrezimeRadnika, ra.adresa, ra.telefon, ra.JMBG, "
+                    + "ra.administrator, ra.username, ra.password, k.sifraKlijenta, k.imeKlijenta, "
+                    + "k.prezimeKlijenta, k.brojPoseta, k.dug FROM racun r JOIN radnik ra ON "
+                    + "(r.sifraRadnika = ra.sifraRadnika) JOIN klijent k ON (r.sifraKlijenta = k.sifraKlijenta)"
+                    + "WHERE r.brojRacuna = " + criteria + " OR k.sifraKlijenta = " + criteria;
+
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(query);
+            List<DomainObject> bills = new ArrayList<>();
+
+            while (rs.next()) {
+                Klijent klijent = new Klijent();
+                klijent.setSifraKlijenta(rs.getLong("k.sifraKlijenta"));
+                klijent.setImeKlijenta(rs.getString("k.imeKlijenta"));
+                klijent.setPrezimeKlijenta(rs.getString("k.prezimeKlijenta"));
+                klijent.setBrojPoseta(rs.getInt("k.brojPoseta"));
+                klijent.setDug(rs.getBigDecimal("k.dug"));
+
+                Radnik radnik = new Radnik();
+                radnik.setSifraRadnika(rs.getLong("ra.sifraRadnika"));
+                radnik.setImeRadnika(rs.getString("ra.imeRadnika"));
+                radnik.setPrezimeRadnika(rs.getString("ra.prezimeRadnika"));
+                radnik.setAdresa(rs.getString("ra.adresa"));
+                radnik.setTelefon(rs.getString("ra.telefon"));
+                radnik.setJMBG(rs.getString("ra.JMBG"));
+                radnik.setAdministrator(rs.getBoolean("ra.administrator"));
+                radnik.setUsername(rs.getString("ra.username"));
+                radnik.setPassword(rs.getString("ra.password"));
+
+                Racun racun = new Racun();
+                racun.setBrojRacuna(rs.getLong("r.brojRacuna"));
+                racun.setDatumIzdavanja(new java.util.Date(rs.getDate("r.datumIzdavanja").getTime()));
+                racun.setUkupnaVrednost(rs.getBigDecimal("r.ukupnaVrednost"));
+                racun.setUkupnaVrednostSaPorezom(rs.getBigDecimal("r.ukupnaVrednostSaPorezom"));
+                racun.setObradjen(rs.getBoolean("r.obradjen"));
+                racun.setStorniran(rs.getBoolean("r.storniran"));
+                racun.setKlijent(klijent);
+                racun.setRadnik(radnik);
+
+                bills.add(racun);
+            }
+
+            return bills;
+        } catch (Exception ex) {
+            ex.printStackTrace();
             throw new Exception();
         }
     }
