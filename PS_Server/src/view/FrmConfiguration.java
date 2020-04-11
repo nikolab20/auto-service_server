@@ -10,10 +10,12 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import thread.ServerThread;
 
@@ -43,11 +45,11 @@ public class FrmConfiguration extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        txtPassword = new javax.swing.JPasswordField();
         lblConfiguration = new javax.swing.JLabel();
         btnConnect = new javax.swing.JButton();
         btnCancel = new javax.swing.JButton();
         lblPassword = new javax.swing.JLabel();
-        txtPassword = new javax.swing.JTextField();
         jSeparator5 = new javax.swing.JSeparator();
         lblUsername = new javax.swing.JLabel();
         txtUsername = new javax.swing.JTextField();
@@ -69,6 +71,13 @@ public class FrmConfiguration extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        txtPassword.setBackground(new java.awt.Color(51, 52, 57));
+        txtPassword.setFont(new java.awt.Font("Georgia", 1, 12)); // NOI18N
+        txtPassword.setForeground(new java.awt.Color(255, 255, 255));
+        txtPassword.setBorder(null);
+        txtPassword.setCaretColor(new java.awt.Color(255, 255, 255));
+        getContentPane().add(txtPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 290, 300, -1));
 
         lblConfiguration.setFont(new java.awt.Font("Georgia", 1, 14)); // NOI18N
         lblConfiguration.setForeground(new java.awt.Color(255, 255, 255));
@@ -100,15 +109,6 @@ public class FrmConfiguration extends javax.swing.JFrame {
         lblPassword.setForeground(new java.awt.Color(255, 255, 255));
         lblPassword.setText("Password");
         getContentPane().add(lblPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 290, -1, -1));
-
-        txtPassword.setEditable(false);
-        txtPassword.setBackground(new java.awt.Color(51, 52, 57));
-        txtPassword.setFont(new java.awt.Font("Georgia", 1, 12)); // NOI18N
-        txtPassword.setForeground(new java.awt.Color(255, 255, 255));
-        txtPassword.setBorder(null);
-        txtPassword.setCaretColor(new java.awt.Color(255, 255, 255));
-        txtPassword.setSelectionColor(new java.awt.Color(119, 118, 116));
-        getContentPane().add(txtPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 290, 300, -1));
 
         jSeparator5.setBackground(new java.awt.Color(119, 118, 116));
         jSeparator5.setForeground(new java.awt.Color(51, 51, 73));
@@ -278,7 +278,14 @@ public class FrmConfiguration extends javax.swing.JFrame {
 
     private void btnConnectMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnConnectMouseClicked
         try {
+            if (!Controller.getInstance().isDefaultConfig()) {
+                Controller.getInstance().writeIntoPropertiesFile(txtServerPort.getText(), txtDriver.getText(),
+                        txtURL.getText(), txtUsername.getText(), txtPassword.getText());
+            }
+
             new ServerThread().start();
+            JOptionPane.showMessageDialog(this.getContentPane(), "Startovan server",
+                    "Uspeh", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(this.getContentPane(), resourceBundle.getString("problemWithStart"),
                     "Error", JOptionPane.ERROR_MESSAGE);
@@ -304,13 +311,17 @@ public class FrmConfiguration extends javax.swing.JFrame {
     private javax.swing.JLabel lblURL;
     private javax.swing.JLabel lblUsername;
     private javax.swing.JTextField txtDriver;
-    private javax.swing.JTextField txtPassword;
+    private javax.swing.JPasswordField txtPassword;
     private javax.swing.JTextField txtServerPort;
     private javax.swing.JTextField txtURL;
     private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
 
     private void prepareView() {
+        URL imageUrl = ClassLoader.getSystemResource("img/transportation.png");
+        ImageIcon imageIcon = new ImageIcon(imageUrl);
+        setIconImage(imageIcon.getImage());
+        
         setBackground(new Color(0, 0, 0, 0));
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation(dimension.width / 2 - this.getSize().width / 2, dimension.height / 2 - this.getSize().height / 2);

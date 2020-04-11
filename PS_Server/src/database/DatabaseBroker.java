@@ -1,15 +1,21 @@
 package database;
 
 import controller.Controller;
+import domain.Deo;
 import domain.DomainObject;
 import domain.Klijent;
+import domain.PoreskaStopa;
+import domain.PredmetProdaje;
 import domain.Radnik;
+import domain.Usluga;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
@@ -66,18 +72,13 @@ public class DatabaseBroker {
 
             connection = DriverManager.getConnection(url, user, password);
             connection.setAutoCommit(false);
-            System.out.println(languageBundle.getString("connectionSuccess"));
         } catch (SQLException e) {
-            e.printStackTrace();
             throw new SQLException(languageBundle.getString("connectionProblem"));
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
             throw new FileNotFoundException(languageBundle.getString("problemsWithFile"));
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
             throw new ClassNotFoundException(languageBundle.getString("classNotFound"));
         } catch (IOException e) {
-            e.printStackTrace();
             throw new IOException(languageBundle.getString("problemsWithStream"));
         }
     }
@@ -92,7 +93,6 @@ public class DatabaseBroker {
             try {
                 connection.close();
             } catch (SQLException ex) {
-                ex.printStackTrace();
                 throw new SQLException(languageBundle.getString("disconnectionProblem"));
             }
         }
@@ -183,8 +183,9 @@ public class DatabaseBroker {
 
     public DomainObject updateDomainObject(DomainObject odo) throws Exception {
         try {
-            String query = "UPDATE " + odo.getTableName() + " SET " + odo.getAttributesForUpdate()
-                    + "WHERE " + odo.getIdentifierName() + " = " + odo.getObjectId();
+            String query = "UPDATE " + odo.getTableName() + " SET "
+                    + odo.getAttributesForUpdate() + " WHERE " + odo.getIdentifierName()
+                    + " = " + odo.getObjectId();
 
             Statement statement = connection.createStatement();
             statement.executeUpdate(query);
@@ -199,8 +200,8 @@ public class DatabaseBroker {
     public List<DomainObject> searchCustomer(String criteria) throws Exception {
 
         try {
-            String query = "SELECT * FROM klijent WHERE imeKlijenta LIKE '" + criteria
-                    + "' OR prezimeKlijenta LIKE '" + criteria + "' OR sifraKlijenta = '" + criteria + "'";
+            String query = "SELECT * FROM klijent WHERE imeKlijenta LIKE '%" + criteria
+                    + "%' OR prezimeKlijenta LIKE '%" + criteria + "%' OR sifraKlijenta = '" + criteria + "'";
 
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(query);
@@ -218,6 +219,284 @@ public class DatabaseBroker {
 
             return customers;
 
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception();
+        }
+    }
+
+    public List<DomainObject> searchEmployees(String criteria) throws Exception {
+        try {
+            String query = "SELECT * FROM radnik WHERE imeRadnika LIKE '%" + criteria
+                    + "%' OR prezimeRadnika LIKE '%" + criteria + "%' OR sifraRadnika = '" + criteria + "'";
+
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(query);
+            List<DomainObject> radnici = new ArrayList<>();
+
+            while (rs.next()) {
+                Radnik radnik = new Radnik();
+                radnik.setSifraRadnika(rs.getLong("sifraRadnika"));
+                radnik.setImeRadnika(rs.getString("imeRadnika"));
+                radnik.setPrezimeRadnika(rs.getString("prezimeRadnika"));
+                radnik.setAdresa(rs.getString("adresa"));
+                radnik.setTelefon(rs.getString("telefon"));
+                radnik.setJMBG(rs.getString("JMBG"));
+                radnik.setAdministrator(rs.getBoolean("administrator"));
+                radnik.setUsername(rs.getString("username"));
+                radnik.setPassword(rs.getString("password"));
+                radnici.add(radnik);
+            }
+
+            return radnici;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception();
+        }
+    }
+
+    public DomainObject deleteDomainObject(DomainObject odo) throws Exception {
+        try {
+            String query = "DELETE FROM " + odo.getTableName() + " WHERE "
+                    + odo.getIdentifierName() + " = " + odo.getObjectId();
+
+            Statement statement = connection.createStatement();
+            statement.executeUpdate(query);
+
+            return odo;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception();
+        }
+    }
+
+    public DomainObject insertDomainObject(DomainObject odo) throws Exception {
+        try {
+            String query = "INSERT INTO " + odo.getTableName() + " ("
+                    + odo.getAttributeNamesForInsert() + ") VALUES (" + odo.getAttributeValuesForInsert() + ")";
+
+            Statement statement = connection.createStatement();
+            statement.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
+            ResultSet rs = statement.getGeneratedKeys();
+
+            if (odo.isAutoincrement()) {
+                Long id = null;
+                while (rs.next()) {
+                    id = rs.getLong(1);
+                }
+                odo.setObjectId(id);
+            }
+
+            return odo;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception();
+        }
+    }
+
+    public List<DomainObject> selectAllTax() throws Exception {
+        try {
+            String query = "SELECT * FROM poreskastopa";
+
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(query);
+            List<DomainObject> poreskeStope = new ArrayList<>();
+
+            while (rs.next()) {
+                PoreskaStopa ps = new PoreskaStopa();
+
+                ps.setId(rs.getLong("id"));
+                ps.setOznaka(rs.getString("oznaka"));
+                ps.setVrednost(rs.getBigDecimal("vrednost"));
+
+                poreskeStope.add(ps);
+            }
+
+            return poreskeStope;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception();
+        }
+    }
+
+    public List<DomainObject> searchCarPart(String criteria) throws Exception {
+        try {
+            String query = "SELECT d.serijskiBroj, d.nazivDela, d.proizvodjac, "
+                    + "d.opis, d.sifraPredmetaProdaje, d.stanje, pp.sifraPredmetaProdaje, "
+                    + "pp.cena, pp.cenaSaPorezom, pp.id, ps.id, ps.oznaka, ps.vrednost "
+                    + "FROM deo d JOIN predmetProdaje pp on (d.sifraPredmetaProdaje = pp.sifraPredmetaProdaje) "
+                    + "JOIN poreskaStopa ps on (pp.id = ps.id) WHERE d.nazivDela LIKE '%"
+                    + criteria + "%' OR d.serijskiBroj = '" + criteria + "'";
+
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(query);
+            List<DomainObject> parts = new ArrayList<>();
+
+            while (rs.next()) {
+                PoreskaStopa poreskaStopa = new PoreskaStopa();
+                poreskaStopa.setId(rs.getLong("ps.id"));
+                poreskaStopa.setVrednost(rs.getBigDecimal("ps.vrednost"));
+                poreskaStopa.setOznaka(rs.getString("ps.oznaka"));
+
+                PredmetProdaje predmetProdaje = new PredmetProdaje();
+                predmetProdaje.setSifraPredmetaProdaje(rs.getLong("pp.sifraPredmetaProdaje"));
+                predmetProdaje.setCena(rs.getBigDecimal("pp.cena"));
+                predmetProdaje.setCenaSaPorezom(rs.getBigDecimal("pp.cenaSaPorezom"));
+                predmetProdaje.setPoreskaStopa(poreskaStopa);
+
+                Deo deo = new Deo();
+                deo.setPredmetProdaje(predmetProdaje);
+                deo.setSerijskiBroj(rs.getLong("serijskiBroj"));
+                deo.setNazivDela(rs.getString("nazivDela"));
+                deo.setProizvodjac(rs.getString("proizvodjac"));
+                deo.setOpis(rs.getString("opis"));
+                deo.setStanje(rs.getInt("stanje"));
+
+                parts.add(deo);
+            }
+
+            return parts;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception();
+        }
+    }
+
+    public List<DomainObject> searchService(String criteria) throws Exception {
+        try {
+            String query = "SELECT u.sifraUsluge, u.nazivUsluge, u.opisUsluge, u.sifraPredmetaProdaje, pp.sifraPredmetaProdaje, "
+                    + "pp.cena, pp.cenaSaPorezom, pp.id, ps.id, ps.oznaka, ps.vrednost "
+                    + "FROM usluga u JOIN predmetProdaje pp on (u.sifraPredmetaProdaje = pp.sifraPredmetaProdaje) "
+                    + "JOIN poreskaStopa ps on (pp.id = ps.id) WHERE u.nazivUsluge LIKE '%" + criteria
+                    + "%' OR u.sifraUsluge = '" + criteria + "'";
+
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(query);
+            List<DomainObject> services = new ArrayList<>();
+
+            while (rs.next()) {
+                PoreskaStopa poreskaStopa = new PoreskaStopa();
+                poreskaStopa.setId(rs.getLong("ps.id"));
+                poreskaStopa.setVrednost(rs.getBigDecimal("ps.vrednost"));
+                poreskaStopa.setOznaka(rs.getString("ps.oznaka"));
+
+                PredmetProdaje predmetProdaje = new PredmetProdaje();
+                predmetProdaje.setSifraPredmetaProdaje(rs.getLong("pp.sifraPredmetaProdaje"));
+                predmetProdaje.setCena(rs.getBigDecimal("pp.cena"));
+                predmetProdaje.setCenaSaPorezom(rs.getBigDecimal("pp.cenaSaPorezom"));
+                predmetProdaje.setPoreskaStopa(poreskaStopa);
+
+                Usluga usluga = new Usluga();
+                usluga.setPredmetProdaje(predmetProdaje);
+                usluga.setNazivUsluge(rs.getString("u.nazivUsluge"));
+                usluga.setOpisUsluge(rs.getString("u.opisUsluge"));
+                usluga.setSifraUsluge(rs.getLong("u.sifraUsluge"));
+
+                services.add(usluga);
+            }
+
+            return services;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception();
+        }
+    }
+
+    public DomainObject searchObjectOfSale(Long criteria) throws Exception {
+        try {
+            String query = "SELECT pp.sifraPredmetaProdaje as 'pp_sifra', pp.cena as 'pp_cena', pp.cenaSaPorezom as 'pp_cenaSaP', "
+                    + "pp.id as 'pp_id', ps.id as 'ps_id', ps.oznaka as 'ps_oznaka', ps.vrednost as 'ps_vrednost' FROM predmetProdaje pp JOIN"
+                    + " poreskaStopa ps on (pp.id = ps.id) WHERE pp.sifraPredmetaProdaje = " + criteria;
+
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(query);
+            PredmetProdaje predmetProdaje = new PredmetProdaje();
+
+            while (rs.next()) {
+                predmetProdaje.setSifraPredmetaProdaje(rs.getLong("pp_sifra"));
+                predmetProdaje.setCena(rs.getBigDecimal("pp_cena"));
+                predmetProdaje.setCenaSaPorezom(rs.getBigDecimal("pp_cenaSaP"));
+                PoreskaStopa poreskaStopa = new PoreskaStopa();
+                poreskaStopa.setId(rs.getLong("ps_id"));
+                poreskaStopa.setVrednost(rs.getBigDecimal("ps_vrednost"));
+                poreskaStopa.setOznaka(rs.getString("ps_oznaka"));
+                predmetProdaje.setPoreskaStopa(poreskaStopa);
+            }
+
+            return predmetProdaje;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception();
+        }
+    }
+
+    public Map<Object, Object> getAllObjectOfSaleWithNames(String criteria) throws Exception {
+        try {
+            String query = "SELECT p.sifraPredmetaProdaje AS 'ID', p.`cena` AS 'Cena', "
+                    + "p.cenaSaPorezom AS 'Cena_sa_porezom', p.id AS 'Porez_ID', "
+                    + "ps.oznaka AS 'Oznaka', ps.vrednost AS 'Vrednost', d.nazivDela AS 'Naziv' "
+                    + "FROM Deo d JOIN predmetprodaje p ON (d.sifraPredmetaProdaje=p.sifraPredmetaProdaje) "
+                    + "JOIN poreskastopa ps ON (p.id=ps.id) "
+                    + "WHERE d.nazivDela LIKE '%" + criteria + "%' OR "
+                    + "d.proizvodjac LIKE '%" + criteria + "%'"
+                    + "UNION SELECT p.sifraPredmetaProdaje, "
+                    + "p.cena, p.cenaSaPorezom, p.id, ps.oznaka, ps.vrednost, u.nazivUsluge FROM "
+                    + "Usluga u JOIN predmetprodaje p ON (u.sifraPredmetaProdaje=p.sifraPredmetaProdaje) "
+                    + "JOIN poreskastopa ps ON (p.id=ps.id) "
+                    + "WHERE u.nazivUsluge LIKE '%" + criteria + "%'"
+                    + "ORDER BY ID";
+
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(query);
+            Map<Object, Object> map = new HashMap<>();
+
+            while (rs.next()) {
+                PoreskaStopa poreskaStopa = new PoreskaStopa();
+                poreskaStopa.setId(rs.getLong("Porez_ID"));
+                poreskaStopa.setVrednost(rs.getBigDecimal("Vrednost"));
+                poreskaStopa.setOznaka(rs.getString("Oznaka"));
+
+                PredmetProdaje predmetProdaje = new PredmetProdaje();
+                predmetProdaje.setSifraPredmetaProdaje(rs.getLong("ID"));
+                predmetProdaje.setCena(rs.getBigDecimal("Cena"));
+                predmetProdaje.setCenaSaPorezom(rs.getBigDecimal("Cena_sa_porezom"));
+                predmetProdaje.setPoreskaStopa(poreskaStopa);
+
+                map.put(predmetProdaje, rs.getString("Naziv"));
+            }
+
+            return map;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception();
+        }
+    }
+
+    public void insertListOfDomainObject(List<DomainObject> listOdo) throws Exception {
+        try {
+            for (DomainObject domainObject : listOdo) {
+                String query = "INSERT INTO " + domainObject.getTableName() + " ("
+                        + domainObject.getAttributeNamesForInsert() + ") VALUES (" + domainObject.getAttributeValuesForInsert() + ")";
+
+                Statement statement = connection.createStatement();
+                statement.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
+                ResultSet rs = statement.getGeneratedKeys();
+
+                if (domainObject.isAutoincrement()) {
+                    Long id = null;
+                    while (rs.next()) {
+                        id = rs.getLong(1);
+                    }
+                    domainObject.setObjectId(id);
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             throw new Exception();

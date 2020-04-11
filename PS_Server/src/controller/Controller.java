@@ -6,7 +6,6 @@
 package controller;
 
 import domain.DomainObject;
-import domain.Klijent;
 import logic.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +17,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -35,7 +35,7 @@ public class Controller {
      * @return the instance of the controller class.
      */
     @Getter
-    private static Controller instance = new Controller();
+    private final static Controller instance = new Controller();
 
     /**
      * Definition of language region.
@@ -85,7 +85,6 @@ public class Controller {
      * Method for initial adjusting the form.
      *
      * @param form is the form tuned by this method.
-     * @param mainPanel is the content panel of this form.
      */
     public void defaultPrepareForm(JFrame form, Dimension dimension) {
         form.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -143,32 +142,152 @@ public class Controller {
         props.setProperty("passwordDatabase", passwordDatabase);
     }
 
+    /**
+     * Method for calling system operation for worker login.
+     *
+     * @param username is String that represents worker username.
+     * @param password is String that represents worker password.
+     * @return an instance of DomainObject class that represents logged worker.
+     * @throws Exception if can't work with database.
+     */
     public DomainObject loginWorker(String username, String password) throws Exception {
         SystemOperation so = new SOWorkerLogin(username, password);
         so.execute();
         return so.getDomainObject();
     }
 
-    public DomainObject createNewCustomer(DomainObject odo) throws Exception {
+    /**
+     * Method for calling system operation for create new domain object.
+     *
+     * @param odo is DomainObject that represents empty instance of domain
+     * object instance.
+     * @return an instance of DomainObject with the identifier set
+     * @throws Exception if can't work with database.
+     */
+    public DomainObject createNewDomainObject(DomainObject odo) throws Exception {
         SystemOperation so = new SOGenerateDomainObject(odo);
         so.execute();
         return so.getDomainObject();
     }
 
-    public DomainObject addCustomer(Klijent klijent) throws Exception {
-        SystemOperation so = new SOSaveNewCustomer(klijent);
+    /**
+     * Method for calling system operation for insert new domain object.
+     *
+     * @param odo is DomainObject that represents instance of domain object
+     * instance.
+     * @return an instance of DomainObject which is inserted into the database.
+     * @throws Exception if can't work with database.
+     */
+    public DomainObject insertDomainObject(DomainObject odo) throws Exception {
+        SystemOperation so = new SOInsertDomainObject(odo);
         so.execute();
         return so.getDomainObject();
     }
 
+    /**
+     * Method for calling system operation for customer search.
+     *
+     * @param criteria is String that represents criteria for customer search.
+     * @return list of search clients.
+     * @throws Exception if can't work with database.
+     */
     public List<DomainObject> searchCustomers(String criteria) throws Exception {
         SystemOperation so = new SOSearchCustomers(criteria);
         so.execute();
         return so.getListDomainObject();
     }
 
-    public void updateCustomer(Klijent klijent) throws Exception {
-        SystemOperation so = new SOUpdateCustomer(klijent);
+    /**
+     * Method for calling system operation for update domain object.
+     *
+     * @param odo is DomainObject that represents instance of domain object.
+     * @return an instance of DomainObject which is updated in the database.
+     * @throws Exception if can't work with database.
+     */
+    public DomainObject updateDomainObject(DomainObject odo) throws Exception {
+        SystemOperation so = new SOUpdateDomainObject(odo);
+        so.execute();
+        return so.getDomainObject();
+    }
+
+    /**
+     * Method for calling system operation for employees search.
+     *
+     * @param criteria is String that represents criteria for employees search.
+     * @return list of search employees.
+     * @throws Exception if can't work with database.
+     */
+    public List<DomainObject> searchEmployees(String criteria) throws Exception {
+        SystemOperation so = new SOSearchEmployees(criteria);
+        so.execute();
+        return so.getListDomainObject();
+    }
+
+    /**
+     * Method for calling system operation for delete domain object.
+     *
+     * @param odo is DomainObject that represents instance of domain object.
+     * @return an instance of DomainObject which is deleted in the database.
+     * @throws Exception if can't work with database.
+     */
+    public DomainObject deleteDomainObject(DomainObject odo) throws Exception {
+        SystemOperation so = new SODeleteDomainObject(odo);
+        so.execute();
+        return so.getDomainObject();
+    }
+
+    /**
+     * Method for calling system operation that returns all tax from database.
+     *
+     * @return list of tax.
+     * @throws Exception if can't work with database.
+     */
+    public List<DomainObject> getAllTax() throws Exception {
+        SystemOperation so = new SOGetAllTax();
+        so.execute();
+        return so.getListDomainObject();
+    }
+
+    /**
+     * Method for calling system operation for car parts search.
+     *
+     * @param criteria is String that represents criteria for car parts search.
+     * @return list of search car parts.
+     * @throws Exception if can't work with database.
+     */
+    public List<DomainObject> searchCarParts(String criteria) throws Exception {
+        SystemOperation so = new SOSearchCarParts(criteria);
+        so.execute();
+        return so.getListDomainObject();
+    }
+
+    /**
+     * Method for calling system operation for service search.
+     *
+     * @param criteria is String that represents criteria for service search.
+     * @return list of search service.
+     * @throws Exception if can't work with database.
+     */
+    public List<DomainObject> searchService(String criteria) throws Exception {
+        SystemOperation so = new SOSearchService(criteria);
+        so.execute();
+        return so.getListDomainObject();
+    }
+
+    public DomainObject searchObjectOfSale(Long criteria) throws Exception {
+        SystemOperation so = new SOSearchObjectOfSale(criteria);
+        so.execute();
+        return so.getDomainObject();
+    }
+
+    public Map<Object, Object> getAllObjectOfSale(String criteria) throws Exception {
+        SystemOperation so = new SOGetAllObjectOfSale(criteria);
+        so.execute();
+        return so.getMapDomainObject();
+    }
+
+    public void insertListOfDomainObject(List<DomainObject> listOdo) throws Exception {
+        SystemOperation so = new SOInsertListOfDomainObject(listOdo);
         so.execute();
     }
 }

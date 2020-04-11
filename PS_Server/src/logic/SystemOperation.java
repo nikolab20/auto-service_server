@@ -6,16 +6,18 @@ import exception.ValidationException;
 import validator.Validator;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author nikol
  */
-
 public abstract class SystemOperation {
+
     Validator validator;
     DatabaseBroker dbbr;
     DomainObject odo;
     List<DomainObject> listOdo;
+    Map<Object, Object> mapOdo;
 
     public SystemOperation() {
         dbbr = new DatabaseBroker();
@@ -57,5 +59,9 @@ public abstract class SystemOperation {
 
     public List<DomainObject> getListDomainObject() {
         return listOdo;
+    }
+
+    public Map<Object, Object> getMapDomainObject() {
+        return mapOdo;
     }
 }

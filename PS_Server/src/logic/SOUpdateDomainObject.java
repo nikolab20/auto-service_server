@@ -1,12 +1,13 @@
 package logic;
 
+import domain.DomainObject;
 import domain.Klijent;
 
-public class SOSaveNewCustomer extends SystemOperation {
+public class SOUpdateDomainObject extends SystemOperation {
 
-    public SOSaveNewCustomer(Klijent klijent) {
+    public SOUpdateDomainObject(DomainObject odo) {
         super();
-        odo = klijent;
+        this.odo = odo;
         //validator
     }
 

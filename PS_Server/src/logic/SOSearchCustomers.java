@@ -1,10 +1,5 @@
 package logic;
 
-import domain.DomainObject;
-import domain.Klijent;
-
-import java.util.List;
-
 public class SOSearchCustomers extends SystemOperation {
 
     private String criteria;

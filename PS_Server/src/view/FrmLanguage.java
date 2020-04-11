@@ -38,8 +38,9 @@ public class FrmLanguage extends javax.swing.JFrame {
         jPanel4 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(255, 255, 255));
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(350, 150));
+        setPreferredSize(new java.awt.Dimension(350, 200));
         getContentPane().setLayout(new java.awt.GridLayout(3, 2));
         getContentPane().add(jPanel1);
         getContentPane().add(jPanel3);
@@ -104,8 +105,6 @@ public class FrmLanguage extends javax.swing.JFrame {
         URL imageUrl = ClassLoader.getSystemResource("img/transportation.png");
         ImageIcon icon = new ImageIcon(imageUrl);
         setIconImage(icon.getImage());
-
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         pack();
         Controller.getInstance().setIconToLabel("img/icons8-great-britain-96.png", lblIconUK);
