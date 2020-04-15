@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -104,6 +105,15 @@ public class ClientHandlerThread extends Thread {
                         break;
                     case Operation.OPERATION_SEARCH_BILL:
                         response = operationSearchBill(request);
+                        break;
+                    case Operation.OPERATION_SEARCH_BILL_FROM_DATE:
+                        response = operationSearchBillFromDate(request);
+                        break;
+                    case Operation.OPERATION_SEARCH_NEW_CLIENTS_FROM_DATE:
+                        response = operationSearchNewClixentsFromDate(request);
+                        break;
+                    case Operation.OPERATION_SEARCH_CLIENTS_WITH_DEBT:
+                        response = operationSearchClientsWithDebt(request);
                         break;
                 }
                 sendResponse(response);
@@ -377,6 +387,53 @@ public class ClientHandlerThread extends Thread {
             response = new ResponseObject();
             List<DomainObject> bills = Controller.getInstance().searchBill(criteria);
             response.setData(bills);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            response.setException(ex);
+        }
+
+        return response;
+    }
+
+    private ResponseObject operationSearchBillFromDate(RequestObject request) {
+        ResponseObject response = null;
+        Date date = (Date) request.getData();
+
+        try {
+            response = new ResponseObject();
+            List<DomainObject> bills = Controller.getInstance().searchBillFromDate(date);
+            response.setData(bills);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            response.setException(ex);
+        }
+
+        return response;
+    }
+
+    private ResponseObject operationSearchNewClixentsFromDate(RequestObject request) {
+        ResponseObject response = null;
+        Date date = (Date) request.getData();
+
+        try {
+            response = new ResponseObject();
+            List<DomainObject> clients = Controller.getInstance().searchNewClientsFromDate(date);
+            response.setData(clients);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            response.setException(ex);
+        }
+
+        return response;
+    }
+    
+    private ResponseObject operationSearchClientsWithDebt(RequestObject request) {
+        ResponseObject response = null;
+
+        try {
+            response = new ResponseObject();
+            List<DomainObject> clients = Controller.getInstance().searchClientsWithDebt();
+            response.setData(clients);
         } catch (Exception ex) {
             ex.printStackTrace();
             response.setException(ex);

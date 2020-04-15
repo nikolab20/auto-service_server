@@ -15,6 +15,7 @@ import java.awt.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -293,6 +294,24 @@ public class Controller {
 
     public List<DomainObject> searchBill(String criteria) throws Exception {
         SystemOperation so = new SOSearchBill(criteria);
+        so.execute();
+        return so.getListDomainObject();
+    }
+    
+    public List<DomainObject> searchBillFromDate(Date date) throws Exception {
+        SystemOperation so = new SoSearchBillFromDate(date);
+        so.execute();
+        return so.getListDomainObject();
+    }
+    
+    public List<DomainObject> searchNewClientsFromDate(Date date) throws Exception {
+        SystemOperation so = new SOSearchNewClientsFromDate(date);
+        so.execute();
+        return so.getListDomainObject();
+    }
+    
+    public List<DomainObject> searchClientsWithDebt() throws Exception {
+        SystemOperation so = new SOSearchClientsWithDebt();
         so.execute();
         return so.getListDomainObject();
     }

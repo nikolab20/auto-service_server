@@ -558,4 +558,115 @@ public class DatabaseBroker {
             throw new Exception();
         }
     }
+
+    public List<DomainObject> searchBillFromDate(java.util.Date date) throws Exception {
+        try {
+            String query = "SELECT r.brojRacuna, r.datumIzdavanja, r.ukupnaVrednost,"
+                    + " r.ukupnaVrednostSaPorezom, r.obradjen, r.storniran, ra.sifraRadnika, "
+                    + "ra.imeRadnika, ra.PrezimeRadnika, ra.adresa, ra.telefon, ra.JMBG, "
+                    + "ra.administrator, ra.username, ra.password, k.sifraKlijenta, k.imeKlijenta, "
+                    + "k.prezimeKlijenta, k.brojPoseta, k.dug FROM racun r JOIN radnik ra ON "
+                    + "(r.sifraRadnika = ra.sifraRadnika) JOIN klijent k ON (r.sifraKlijenta = k.sifraKlijenta)"
+                    + "WHERE r.datumIzdavanja >= " + new Date(date.getTime())
+                    + " ORDER BY r.brojRacuna";
+
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(query);
+            List<DomainObject> bills = new ArrayList<>();
+
+            while (rs.next()) {
+                Klijent klijent = new Klijent();
+                klijent.setSifraKlijenta(rs.getLong("k.sifraKlijenta"));
+                klijent.setImeKlijenta(rs.getString("k.imeKlijenta"));
+                klijent.setPrezimeKlijenta(rs.getString("k.prezimeKlijenta"));
+                klijent.setBrojPoseta(rs.getInt("k.brojPoseta"));
+                klijent.setDug(rs.getBigDecimal("k.dug"));
+
+                Radnik radnik = new Radnik();
+                radnik.setSifraRadnika(rs.getLong("ra.sifraRadnika"));
+                radnik.setImeRadnika(rs.getString("ra.imeRadnika"));
+                radnik.setPrezimeRadnika(rs.getString("ra.prezimeRadnika"));
+                radnik.setAdresa(rs.getString("ra.adresa"));
+                radnik.setTelefon(rs.getString("ra.telefon"));
+                radnik.setJMBG(rs.getString("ra.JMBG"));
+                radnik.setAdministrator(rs.getBoolean("ra.administrator"));
+                radnik.setUsername(rs.getString("ra.username"));
+                radnik.setPassword(rs.getString("ra.password"));
+
+                Racun racun = new Racun();
+                racun.setBrojRacuna(rs.getLong("r.brojRacuna"));
+                racun.setDatumIzdavanja(new java.util.Date(rs.getDate("r.datumIzdavanja").getTime()));
+                racun.setUkupnaVrednost(rs.getBigDecimal("r.ukupnaVrednost"));
+                racun.setUkupnaVrednostSaPorezom(rs.getBigDecimal("r.ukupnaVrednostSaPorezom"));
+                racun.setObradjen(rs.getBoolean("r.obradjen"));
+                racun.setStorniran(rs.getBoolean("r.storniran"));
+                racun.setKlijent(klijent);
+                racun.setRadnik(radnik);
+
+                bills.add(racun);
+            }
+
+            return bills;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new Exception();
+        }
+    }
+
+    public List<DomainObject> searchNewClientsFromDate(java.util.Date date) throws Exception {
+        try {
+            String query = "SELECT k.sifraKlijenta, k.imeKlijenta, k.prezimeKlijenta, k.brojPoseta, "
+                    + "k.dug FROM racun r JOIN klijent k ON (r.sifraKlijenta = k.sifraKlijenta) WHERE "
+                    + "r.datumIzdavanja >=" + new Date(date.getTime()) + " AND k.`brojPoseta` = 1 ORDER "
+                    + "BY k.sifraKlijenta";
+
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(query);
+            List<DomainObject> clients = new ArrayList<>();
+
+            while (rs.next()) {
+                Klijent klijent = new Klijent();
+                klijent.setSifraKlijenta(rs.getLong("k.sifraKlijenta"));
+                klijent.setImeKlijenta(rs.getString("k.imeKlijenta"));
+                klijent.setPrezimeKlijenta(rs.getString("k.prezimeKlijenta"));
+                klijent.setBrojPoseta(rs.getInt("k.brojPoseta"));
+                klijent.setDug(rs.getBigDecimal("k.dug"));
+
+                clients.add(klijent);
+            }
+
+            return clients;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new Exception();
+        }
+    }
+    
+    public List<DomainObject> searchClientsWithDebt() throws Exception {
+        try {
+            String query = "SELECT k.sifraKlijenta, k.imeKlijenta, k.prezimeKlijenta, k.brojPoseta, "
+                    + "k.dug FROM racun r JOIN klijent k ON (r.sifraKlijenta = k.sifraKlijenta) WHERE "
+                    + "k.dug > 1 ORDER BY k.dug DESC";
+
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(query);
+            List<DomainObject> clients = new ArrayList<>();
+
+            while (rs.next()) {
+                Klijent klijent = new Klijent();
+                klijent.setSifraKlijenta(rs.getLong("k.sifraKlijenta"));
+                klijent.setImeKlijenta(rs.getString("k.imeKlijenta"));
+                klijent.setPrezimeKlijenta(rs.getString("k.prezimeKlijenta"));
+                klijent.setBrojPoseta(rs.getInt("k.brojPoseta"));
+                klijent.setDug(rs.getBigDecimal("k.dug"));
+
+                clients.add(klijent);
+            }
+
+            return clients;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new Exception();
+        }
+    }
 }
