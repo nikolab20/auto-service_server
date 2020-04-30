@@ -86,6 +86,7 @@ public class Controller {
      * Method for initial adjusting the form.
      *
      * @param form is the form tuned by this method.
+     * @param dimension is the value of dimension of form.
      */
     public void defaultPrepareForm(JFrame form, Dimension dimension) {
         form.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -188,12 +189,12 @@ public class Controller {
     /**
      * Method for calling system operation for customer search.
      *
-     * @param criteria is String that represents criteria for customer search.
+     * @param customerID is Long that represents criteria for customer search.
      * @return list of search clients.
      * @throws Exception if can't work with database.
      */
-    public List<DomainObject> searchCustomers(String criteria) throws Exception {
-        SystemOperation so = new SOSearchCustomers(criteria);
+    public List<DomainObject> searchCustomers(Long customerID) throws Exception {
+        SystemOperation so = new SOSearchCustomers(customerID);
         so.execute();
         return so.getListDomainObject();
     }
@@ -214,12 +215,12 @@ public class Controller {
     /**
      * Method for calling system operation for employees search.
      *
-     * @param criteria is String that represents criteria for employees search.
+     * @param employeeID is Long that represents criteria for employees search.
      * @return list of search employees.
      * @throws Exception if can't work with database.
      */
-    public List<DomainObject> searchEmployees(String criteria) throws Exception {
-        SystemOperation so = new SOSearchEmployees(criteria);
+    public List<DomainObject> searchEmployees(Long employeeID) throws Exception {
+        SystemOperation so = new SOSearchEmployees(employeeID);
         so.execute();
         return so.getListDomainObject();
     }
@@ -256,7 +257,7 @@ public class Controller {
      * @return list of search car parts.
      * @throws Exception if can't work with database.
      */
-    public List<DomainObject> searchCarParts(String criteria) throws Exception {
+    public List<DomainObject> searchCarParts(Long criteria) throws Exception {
         SystemOperation so = new SOSearchCarParts(criteria);
         so.execute();
         return so.getListDomainObject();
@@ -269,7 +270,7 @@ public class Controller {
      * @return list of search service.
      * @throws Exception if can't work with database.
      */
-    public List<DomainObject> searchService(String criteria) throws Exception {
+    public List<DomainObject> searchService(Long criteria) throws Exception {
         SystemOperation so = new SOSearchService(criteria);
         so.execute();
         return so.getListDomainObject();
@@ -281,8 +282,8 @@ public class Controller {
         return so.getDomainObject();
     }
 
-    public Map<Object, Object> getAllObjectOfSale(String criteria) throws Exception {
-        SystemOperation so = new SOGetAllObjectOfSale(criteria);
+    public Map<Object, Object> searchObjectOfSaleWithNames(Long criteria) throws Exception {
+        SystemOperation so = new SOSearchObjectOfSale(criteria);
         so.execute();
         return so.getMapDomainObject();
     }
@@ -292,27 +293,75 @@ public class Controller {
         so.execute();
     }
 
-    public List<DomainObject> searchBill(String criteria) throws Exception {
+    public List<DomainObject> searchBill(Long criteria) throws Exception {
         SystemOperation so = new SOSearchBill(criteria);
         so.execute();
         return so.getListDomainObject();
     }
-    
+
     public List<DomainObject> searchBillFromDate(Date date) throws Exception {
         SystemOperation so = new SoSearchBillFromDate(date);
         so.execute();
         return so.getListDomainObject();
     }
-    
+
     public List<DomainObject> searchNewClientsFromDate(Date date) throws Exception {
         SystemOperation so = new SOSearchNewClientsFromDate(date);
         so.execute();
         return so.getListDomainObject();
     }
-    
+
     public List<DomainObject> searchClientsWithDebt() throws Exception {
         SystemOperation so = new SOSearchClientsWithDebt();
         so.execute();
         return so.getListDomainObject();
+    }
+
+    public List<DomainObject> searchTax(Long id) throws Exception {
+        SystemOperation so = new SOSearchTax(id);
+        so.execute();
+        return so.getListDomainObject();
+    }
+
+    public List<DomainObject> getAllEmployees() throws Exception {
+        SystemOperation so = new SOGetAllEmployees();
+        so.execute();
+        return so.getListDomainObject();
+    }
+
+    public List<DomainObject> getAllCarParts() throws Exception {
+        SystemOperation so = new SOGetAllCarParts();
+        so.execute();
+        return so.getListDomainObject();
+    }
+
+    public List<DomainObject> getAllServices() throws Exception {
+        SystemOperation so = new SOGetAllServices();
+        so.execute();
+        return so.getListDomainObject();
+    }
+
+    public List<DomainObject> getAllBills() throws Exception {
+        SystemOperation so = new SOGetAllBills();
+        so.execute();
+        return so.getListDomainObject();
+    }
+
+    public List<DomainObject> getAllCustomers() throws Exception {
+        SystemOperation so = new SOGetAllCustomers();
+        so.execute();
+        return so.getListDomainObject();
+    }
+
+    public Map<Object, Object> getAllObjectOfSale() throws Exception {
+        SystemOperation so = new SOGetAllOfObjectOfSale();
+        so.execute();
+        return so.getMapDomainObject();
+    }
+
+    public DomainObject checkUsername(String username) throws Exception {
+        SystemOperation so = new SOCheckUsername(username);
+        so.execute();
+        return so.getDomainObject();
     }
 }

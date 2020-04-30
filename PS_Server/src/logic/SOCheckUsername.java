@@ -5,21 +5,22 @@
  */
 package logic;
 
-import domain.DomainObject;
-
 /**
  *
  * @author nikol
  */
-public class SOInsertDomainObject extends SystemOperation {
+public class SOCheckUsername extends SystemOperation {
 
-    public SOInsertDomainObject(DomainObject odo) {
+    private final String username;
+
+    public SOCheckUsername(String username) {
         super();
-        this.odo = odo;
+        this.username = username;
     }
 
     @Override
     protected void operation() throws Exception {
-        odo = dbbr.insertDomainObject(odo);
+        odo = dbbr.checkUsername(username);
     }
+
 }

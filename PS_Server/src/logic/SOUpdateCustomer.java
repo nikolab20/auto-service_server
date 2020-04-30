@@ -1,13 +1,14 @@
 package logic;
 
 import domain.Klijent;
+import validator.impl.ValidatorCustomer;
 
 public class SOUpdateCustomer extends SystemOperation {
 
     public SOUpdateCustomer(Klijent klijent) {
         super();
         odo = klijent;
-        //validator
+        validator = new ValidatorCustomer();
     }
 
     @Override

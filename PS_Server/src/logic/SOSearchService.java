@@ -11,12 +11,11 @@ package logic;
  */
 public class SOSearchService extends SystemOperation {
 
-    private String criteria;
+    private final Long criteria;
 
-    public SOSearchService(String criteria) {
+    public SOSearchService(Long criteria) {
         super();
         this.criteria = criteria;
-        //validator
     }
 
     @Override

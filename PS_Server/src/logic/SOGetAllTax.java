@@ -13,7 +13,6 @@ public class SOGetAllTax extends SystemOperation {
 
     public SOGetAllTax() {
         super();
-        //validator
     }
 
     @Override

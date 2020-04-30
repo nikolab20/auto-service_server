@@ -5,21 +5,21 @@
  */
 package logic;
 
-import domain.DomainObject;
-
 /**
  *
  * @author nikol
  */
-public class SOInsertDomainObject extends SystemOperation {
+public class SOSearchTax extends SystemOperation {
 
-    public SOInsertDomainObject(DomainObject odo) {
+    private final Long id;
+
+    public SOSearchTax(Long id) {
         super();
-        this.odo = odo;
+        this.id = id;
     }
 
     @Override
     protected void operation() throws Exception {
-        odo = dbbr.insertDomainObject(odo);
+        listOdo = dbbr.searchTax(id);
     }
 }

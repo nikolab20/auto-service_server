@@ -11,16 +11,15 @@ package logic;
  */
 public class SOSearchCarParts extends SystemOperation {
 
-    private String criteria;
+    private final Long serialNumber;
 
-    public SOSearchCarParts(String criteria) {
+    public SOSearchCarParts(Long serialNumber) {
         super();
-        this.criteria = criteria;
-        //validator
+        this.serialNumber = serialNumber;
     }
 
     @Override
     protected void operation() throws Exception {
-        listOdo = dbbr.searchCarPart(criteria);
+        listOdo = dbbr.searchCarPart(serialNumber);
     }
 }

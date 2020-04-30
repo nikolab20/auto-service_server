@@ -5,8 +5,6 @@
  */
 package logic;
 
-import java.util.Date;
-
 /**
  *
  * @author nikol

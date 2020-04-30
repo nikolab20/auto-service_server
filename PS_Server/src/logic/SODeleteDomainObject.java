@@ -16,7 +16,6 @@ public class SODeleteDomainObject extends SystemOperation {
     public SODeleteDomainObject(DomainObject odo) {
         super();
         this.odo = odo;
-        //validator
     }
 
     @Override

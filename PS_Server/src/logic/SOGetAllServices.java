@@ -5,21 +5,18 @@
  */
 package logic;
 
-import domain.DomainObject;
-
 /**
  *
  * @author nikol
  */
-public class SOInsertDomainObject extends SystemOperation {
+public class SOGetAllServices extends SystemOperation {
 
-    public SOInsertDomainObject(DomainObject odo) {
+    public SOGetAllServices() {
         super();
-        this.odo = odo;
     }
 
     @Override
     protected void operation() throws Exception {
-        odo = dbbr.insertDomainObject(odo);
+        listOdo = dbbr.selectAllServices();
     }
 }

@@ -11,9 +11,9 @@ package logic;
  */
 public class SOSearchBill extends SystemOperation {
 
-    private String criteria;
+    private final Long criteria;
 
-    public SOSearchBill(String criteria) {
+    public SOSearchBill(Long criteria) {
         super();
         this.criteria = criteria;
     }

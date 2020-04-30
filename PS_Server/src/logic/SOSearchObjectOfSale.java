@@ -11,12 +11,11 @@ package logic;
  */
 public class SOSearchObjectOfSale extends SystemOperation {
 
-    private Long criteria;
+    private final Long criteria;
 
     public SOSearchObjectOfSale(Long criteria) {
         super();
         this.criteria = criteria;
-        //validator
     }
 
     @Override

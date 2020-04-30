@@ -1,24 +1,18 @@
 package logic;
 
-import database.DatabaseBroker;
-import domain.Radnik;
-
 /**
  * @author nikol
  */
-
 public class SOWorkerLogin extends SystemOperation {
 
-    private String username;
-    private String password;
+    private final String username;
+    private final String password;
 
     public SOWorkerLogin(String username, String password) {
         super();
         this.username = username;
         this.password = password;
-        //validator=new ValidatorCredentials(username, password);
     }
-
 
     @Override
     protected void operation() throws Exception {

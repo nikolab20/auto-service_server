@@ -7,7 +7,6 @@ public class SOGenerateDomainObject extends SystemOperation {
     public SOGenerateDomainObject(DomainObject odo) {
         super();
         this.odo = odo;
-        //validator
     }
 
     @Override

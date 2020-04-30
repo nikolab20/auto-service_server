@@ -13,10 +13,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
 import thread.ServerThread;
 
 /**
@@ -25,7 +22,7 @@ import thread.ServerThread;
  */
 public class FrmConfiguration extends javax.swing.JFrame {
 
-    private ResourceBundle resourceBundle;
+    private final ResourceBundle resourceBundle;
 
     /**
      * Creates new form FrmServer
@@ -243,8 +240,8 @@ public class FrmConfiguration extends javax.swing.JFrame {
             btnConnect.setEnabled(true);
 
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, resourceBundle.getString("problemsWithFile"),
-                    "Error", JOptionPane.ERROR_MESSAGE);
+            MessageDialog.showErrorMessage(null, resourceBundle.getString("server_file_error"),
+                    resourceBundle.getString("error_title"));
         }
     }//GEN-LAST:event_btnDefaultMouseClicked
 
@@ -283,12 +280,16 @@ public class FrmConfiguration extends javax.swing.JFrame {
                         txtURL.getText(), txtUsername.getText(), txtPassword.getText());
             }
 
-            new ServerThread().start();
-            JOptionPane.showMessageDialog(this.getContentPane(), "Startovan server",
-                    "Uspeh", JOptionPane.INFORMATION_MESSAGE);
+            ServerThread serverThread = new ServerThread();
+            serverThread.start();
+
+            MessageDialog.showSuccessMessage(null, resourceBundle.getString("server_connected_successfully"),
+                    resourceBundle.getString("success_title"));
+            new FrmControlPanel(serverThread).setVisible(true);
+            dispose();
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this.getContentPane(), resourceBundle.getString("problemWithStart"),
-                    "Error", JOptionPane.ERROR_MESSAGE);
+            MessageDialog.showErrorMessage(null, resourceBundle.getString("server_connected_error"),
+                    resourceBundle.getString("error_title"));
         }
     }//GEN-LAST:event_btnConnectMouseClicked
 
@@ -321,19 +322,19 @@ public class FrmConfiguration extends javax.swing.JFrame {
         URL imageUrl = ClassLoader.getSystemResource("img/transportation.png");
         ImageIcon imageIcon = new ImageIcon(imageUrl);
         setIconImage(imageIcon.getImage());
-        
+
         setBackground(new Color(0, 0, 0, 0));
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation(dimension.width / 2 - this.getSize().width / 2, dimension.height / 2 - this.getSize().height / 2);
 
-        lblConfiguration.setText(resourceBundle.getString("server_lblConfiguration") + ":");
-        Controller.getInstance().setIconToButton("img/" + resourceBundle.getString("server_btnDefault") + ".png", btnDefault);
-        Controller.getInstance().setIconToButton("img/" + resourceBundle.getString("server_btnCustom") + ".png", btnCustom);
-        lblServerPort.setText(resourceBundle.getString("server_lblPort") + ":");
-        lblDriver.setText(resourceBundle.getString("server_lblDriver") + ":");
-        lblURL.setText(resourceBundle.getString("server_lblURL") + ":");
-        lblUsername.setText(resourceBundle.getString("server_lblUsername") + ":");
-        lblPassword.setText(resourceBundle.getString("server_lblPassword") + ":");
+        lblConfiguration.setText(resourceBundle.getString("server_lbl_configuration") + ":");
+        Controller.getInstance().setIconToButton("img/" + resourceBundle.getString("server_btn_default") + ".png", btnDefault);
+        Controller.getInstance().setIconToButton("img/" + resourceBundle.getString("server_btn_custom") + ".png", btnCustom);
+        lblServerPort.setText(resourceBundle.getString("server_lbl_port") + ":");
+        lblDriver.setText(resourceBundle.getString("server_lbl_driver") + ":");
+        lblURL.setText(resourceBundle.getString("server_lbl_URL") + ":");
+        lblUsername.setText(resourceBundle.getString("server_lbl_username") + ":");
+        lblPassword.setText(resourceBundle.getString("server_lbl_password") + ":");
         Controller.getInstance().setIconToButton("img/" + resourceBundle.getString("server_btn_connect") + ".png", btnConnect);
         Controller.getInstance().setIconToButton("img/" + resourceBundle.getString("server_btn_cancel") + ".png", btnCancel);
     }

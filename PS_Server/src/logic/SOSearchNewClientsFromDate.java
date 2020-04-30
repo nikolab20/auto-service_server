@@ -13,7 +13,7 @@ import java.util.Date;
  */
 public class SOSearchNewClientsFromDate extends SystemOperation {
 
-    private Date date;
+    private final Date date;
 
     public SOSearchNewClientsFromDate(Date date) {
         super();

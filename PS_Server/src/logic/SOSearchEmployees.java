@@ -11,17 +11,16 @@ package logic;
  */
 public class SOSearchEmployees extends SystemOperation {
 
-    private String criteria;
-    
-    public SOSearchEmployees(String criteria) {
+    private final Long employeeID;
+
+    public SOSearchEmployees(Long employeeID) {
         super();
-        this.criteria = criteria;
-        //validator
+        this.employeeID = employeeID;
     }
-    
+
     @Override
     protected void operation() throws Exception {
-        listOdo = dbbr.searchEmployees(criteria);
+        listOdo = dbbr.searchEmployees(employeeID);
     }
-    
+
 }

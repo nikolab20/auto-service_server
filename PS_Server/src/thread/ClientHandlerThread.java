@@ -22,6 +22,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author nikol
@@ -38,7 +40,7 @@ public class ClientHandlerThread extends Thread {
      * @return an instance of the Socket class.
      */
     @Getter
-    private Socket socket;
+    private final Socket socket;
 
     /**
      * Definition of client language region.
@@ -47,9 +49,12 @@ public class ClientHandlerThread extends Thread {
 
     /**
      * The constructor of this class with value for the socket as parameter.
+     *
+     * @param socket
      */
     public ClientHandlerThread(Socket socket) {
         this.socket = socket;
+        this.setName("Not logged in");
     }
 
     @Override
@@ -97,9 +102,6 @@ public class ClientHandlerThread extends Thread {
                     case Operation.OPERATION_SEARCH_OBJECT_OF_SALE:
                         response = operationSearchObjectOfSale(request);
                         break;
-                    case Operation.OPERATION_GET_ALL_OBJECT_OF_SALES:
-                        response = operationGetAllObjectOfSales(request);
-                        break;
                     case Operation.OPERATION_INSERT_LIST:
                         response = operationInsertListOfDomainObject(request);
                         break;
@@ -115,8 +117,37 @@ public class ClientHandlerThread extends Thread {
                     case Operation.OPERATION_SEARCH_CLIENTS_WITH_DEBT:
                         response = operationSearchClientsWithDebt(request);
                         break;
+                    case Operation.OPERATION_SEARCH_TAX:
+                        response = operationSearchTax(request);
+                        break;
+                    case Operation.OPERATION_DISCONNECT:
+                        operationDisconnect(request);
+                        break;
+                    case Operation.OPERATION_SEARCH_ALL_OBJECT_OF_SALES:
+                        response = operationSearchObjectOfSales(request);
+                        break;
+                    case Operation.OPERATION_SELECT_ALL_BILLS:
+                        response = operationGetAllBills(request);
+                        break;
+                    case Operation.OPERATION_SELECT_ALL_EMPLOYEES:
+                        response = operationGetAllEmployees(request);
+                        break;
+                    case Operation.OPERATION_SELECT_ALL_CAR_PARTS:
+                        response = operationGetAllCarParts(request);
+                        break;
+                    case Operation.OPERATION_SELECT_ALL_SERVICES:
+                        response = operationGetAllServices(request);
+                        break;
+                    case Operation.OPERATION_SELECT_ALL_CUSTOMERS:
+                        response = operationGetAllCustomers(request);
+                        break;
+                    case Operation.OPERATION_SELECT_ALL_OBJECT_OF_SALE:
+                        response = operationGetAllObjectOfSale(request);
+                        break;
                 }
-                sendResponse(response);
+                if (request.getOperation() != Operation.OPERATION_DISCONNECT) {
+                    sendResponse(response);
+                }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -156,16 +187,11 @@ public class ClientHandlerThread extends Thread {
      * @return An object of class {@link ResponseObject}.
      */
     private ResponseObject operationChooseLanguage(RequestObject request) {
-        ResponseObject response = null;
+        ResponseObject response;
         Locale l = (Locale) request.getData();
 
-        try {
-            response = new ResponseObject();
-            this.locale = l;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            response.setException(ex);
-        }
+        response = new ResponseObject();
+        this.locale = l;
 
         return response;
     }
@@ -179,9 +205,9 @@ public class ClientHandlerThread extends Thread {
         try {
             response = new ResponseObject();
             Radnik radnik = (Radnik) Controller.getInstance().loginWorker(username, password);
+            this.setName(radnik.getImeRadnika() + " " + radnik.getPrezimeRadnika());
             response.setData(radnik);
         } catch (Exception ex) {
-            ex.printStackTrace();
             response.setException(ex);
         }
 
@@ -197,7 +223,6 @@ public class ClientHandlerThread extends Thread {
             odo = (DomainObject) Controller.getInstance().createNewDomainObject(odo);
             response.setData(odo);
         } catch (Exception ex) {
-            ex.printStackTrace();
             response.setException(ex);
         }
 
@@ -213,7 +238,6 @@ public class ClientHandlerThread extends Thread {
             odo = (DomainObject) Controller.getInstance().insertDomainObject(odo);
             response.setData(odo);
         } catch (Exception ex) {
-            ex.printStackTrace();
             response.setException(ex);
         }
 
@@ -222,14 +246,13 @@ public class ClientHandlerThread extends Thread {
 
     private ResponseObject operationSearchCustomers(RequestObject request) {
         ResponseObject response = null;
-        String criteria = (String) request.getData();
+        Long customerID = (Long) request.getData();
 
         try {
             response = new ResponseObject();
-            List<DomainObject> customers = Controller.getInstance().searchCustomers(criteria);
+            List<DomainObject> customers = Controller.getInstance().searchCustomers(customerID);
             response.setData(customers);
         } catch (Exception ex) {
-            ex.printStackTrace();
             response.setException(ex);
         }
 
@@ -245,7 +268,6 @@ public class ClientHandlerThread extends Thread {
             odo = Controller.getInstance().updateDomainObject(odo);
             response.setData(odo);
         } catch (Exception ex) {
-            ex.printStackTrace();
             response.setException(ex);
         }
 
@@ -254,14 +276,13 @@ public class ClientHandlerThread extends Thread {
 
     private ResponseObject operationSearchEmployees(RequestObject request) {
         ResponseObject response = null;
-        String criteria = (String) request.getData();
+        Long employeeID = (Long) request.getData();
 
         try {
             response = new ResponseObject();
-            List<DomainObject> employees = Controller.getInstance().searchEmployees(criteria);
+            List<DomainObject> employees = Controller.getInstance().searchEmployees(employeeID);
             response.setData(employees);
         } catch (Exception ex) {
-            ex.printStackTrace();
             response.setException(ex);
         }
 
@@ -277,7 +298,6 @@ public class ClientHandlerThread extends Thread {
             odo = Controller.getInstance().deleteDomainObject(odo);
             response.setData(odo);
         } catch (Exception ex) {
-            ex.printStackTrace();
             response.setException(ex);
         }
 
@@ -292,7 +312,6 @@ public class ClientHandlerThread extends Thread {
             List<DomainObject> tax = Controller.getInstance().getAllTax();
             response.setData(tax);
         } catch (Exception ex) {
-            ex.printStackTrace();
             response.setException(ex);
         }
 
@@ -301,14 +320,13 @@ public class ClientHandlerThread extends Thread {
 
     private ResponseObject operationSearchCarPart(RequestObject request) {
         ResponseObject response = null;
-        String criteria = (String) request.getData();
+        Long criteria = (Long) request.getData();
 
         try {
             response = new ResponseObject();
             List<DomainObject> parts = Controller.getInstance().searchCarParts(criteria);
             response.setData(parts);
         } catch (Exception ex) {
-            ex.printStackTrace();
             response.setException(ex);
         }
 
@@ -317,14 +335,13 @@ public class ClientHandlerThread extends Thread {
 
     private ResponseObject operationSearchService(RequestObject request) {
         ResponseObject response = null;
-        String criteria = (String) request.getData();
+        Long criteria = (Long) request.getData();
 
         try {
             response = new ResponseObject();
             List<DomainObject> services = Controller.getInstance().searchService(criteria);
             response.setData(services);
         } catch (Exception ex) {
-            ex.printStackTrace();
             response.setException(ex);
         }
 
@@ -340,23 +357,21 @@ public class ClientHandlerThread extends Thread {
             DomainObject objectOfSale = Controller.getInstance().searchObjectOfSale(criteria);
             response.setData(objectOfSale);
         } catch (Exception ex) {
-            ex.printStackTrace();
             response.setException(ex);
         }
 
         return response;
     }
 
-    private ResponseObject operationGetAllObjectOfSales(RequestObject request) {
+    private ResponseObject operationSearchObjectOfSales(RequestObject request) {
         ResponseObject response = null;
-        String criteria = (String) request.getData();
+        Long criteria = (Long) request.getData();
 
         try {
             response = new ResponseObject();
-            Map<Object, Object> objectsOfSale = Controller.getInstance().getAllObjectOfSale(criteria);
+            Map<Object, Object> objectsOfSale = Controller.getInstance().searchObjectOfSaleWithNames(criteria);
             response.setData(objectsOfSale);
         } catch (Exception ex) {
-            ex.printStackTrace();
             response.setException(ex);
         }
 
@@ -372,7 +387,6 @@ public class ClientHandlerThread extends Thread {
             Controller.getInstance().insertListOfDomainObject(listOdo);
             response.setData(listOdo);
         } catch (Exception ex) {
-            ex.printStackTrace();
             response.setException(ex);
         }
 
@@ -381,14 +395,13 @@ public class ClientHandlerThread extends Thread {
 
     private ResponseObject operationSearchBill(RequestObject request) {
         ResponseObject response = null;
-        String criteria = (String) request.getData();
+        Long criteria = (Long) request.getData();
 
         try {
             response = new ResponseObject();
             List<DomainObject> bills = Controller.getInstance().searchBill(criteria);
             response.setData(bills);
         } catch (Exception ex) {
-            ex.printStackTrace();
             response.setException(ex);
         }
 
@@ -404,7 +417,6 @@ public class ClientHandlerThread extends Thread {
             List<DomainObject> bills = Controller.getInstance().searchBillFromDate(date);
             response.setData(bills);
         } catch (Exception ex) {
-            ex.printStackTrace();
             response.setException(ex);
         }
 
@@ -420,13 +432,12 @@ public class ClientHandlerThread extends Thread {
             List<DomainObject> clients = Controller.getInstance().searchNewClientsFromDate(date);
             response.setData(clients);
         } catch (Exception ex) {
-            ex.printStackTrace();
             response.setException(ex);
         }
 
         return response;
     }
-    
+
     private ResponseObject operationSearchClientsWithDebt(RequestObject request) {
         ResponseObject response = null;
 
@@ -435,7 +446,113 @@ public class ClientHandlerThread extends Thread {
             List<DomainObject> clients = Controller.getInstance().searchClientsWithDebt();
             response.setData(clients);
         } catch (Exception ex) {
+            response.setException(ex);
+        }
+
+        return response;
+    }
+
+    private ResponseObject operationSearchTax(RequestObject request) {
+        ResponseObject response = null;
+        Long id = (Long) request.getData();
+
+        try {
+            response = new ResponseObject();
+            List<DomainObject> tax = Controller.getInstance().searchTax(id);
+            response.setData(tax);
+        } catch (Exception ex) {
+            response.setException(ex);
+        }
+
+        return response;
+    }
+
+    private void operationDisconnect(RequestObject request) {
+        try {
+            socket.close();
+        } catch (IOException ex) {
             ex.printStackTrace();
+        }
+    }
+
+    private ResponseObject operationGetAllCustomers(RequestObject request) {
+        ResponseObject response = null;
+
+        try {
+            response = new ResponseObject();
+            List<DomainObject> customers = Controller.getInstance().getAllCustomers();
+            response.setData(customers);
+        } catch (Exception ex) {
+            response.setException(ex);
+        }
+
+        return response;
+    }
+
+    private ResponseObject operationGetAllBills(RequestObject request) {
+        ResponseObject response = null;
+
+        try {
+            response = new ResponseObject();
+            List<DomainObject> bills = Controller.getInstance().getAllBills();
+            response.setData(bills);
+        } catch (Exception ex) {
+            response.setException(ex);
+        }
+
+        return response;
+    }
+
+    private ResponseObject operationGetAllEmployees(RequestObject request) {
+        ResponseObject response = null;
+
+        try {
+            response = new ResponseObject();
+            List<DomainObject> employees = Controller.getInstance().getAllEmployees();
+            response.setData(employees);
+        } catch (Exception ex) {
+            response.setException(ex);
+        }
+
+        return response;
+    }
+
+    private ResponseObject operationGetAllCarParts(RequestObject request) {
+        ResponseObject response = null;
+
+        try {
+            response = new ResponseObject();
+            List<DomainObject> carParts = Controller.getInstance().getAllCarParts();
+            response.setData(carParts);
+        } catch (Exception ex) {
+            response.setException(ex);
+        }
+
+        return response;
+    }
+
+    private ResponseObject operationGetAllServices(RequestObject request) {
+        ResponseObject response = null;
+
+        try {
+            response = new ResponseObject();
+            List<DomainObject> services = Controller.getInstance().getAllServices();
+            response.setData(services);
+        } catch (Exception ex) {
+            response.setException(ex);
+        }
+
+        return response;
+    }
+
+    private ResponseObject operationGetAllObjectOfSale(RequestObject request) {
+        ResponseObject response = null;
+
+        try {
+            response = new ResponseObject();
+            Map<Object, Object> objects = Controller.getInstance().getAllObjectOfSale();
+            response.setData(objects);
+        } catch (Exception ex) {
             response.setException(ex);
         }
 

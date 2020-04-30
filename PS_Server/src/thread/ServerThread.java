@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import listeners.ClientsListener;
 
 public class ServerThread extends Thread {
 
@@ -18,12 +19,15 @@ public class ServerThread extends Thread {
      * @return The current value for server socket.
      */
     @Getter
-    private ServerSocket serverSocket;
+    private final ServerSocket serverSocket;
 
     /**
      * The list of the currently active clients.
      */
-    private List<ClientHandlerThread> clients;
+    @Getter
+    private final List<ClientHandlerThread> clients;
+
+    private final List<ClientsListener> clientsListeners;
 
     /**
      * The constructor of this class without any parameters.
@@ -31,6 +35,7 @@ public class ServerThread extends Thread {
      * @throws IOException if properties file doesn't exist.
      */
     public ServerThread() throws IOException {
+        this.clientsListeners = new ArrayList<>();
         Properties props = Controller.getInstance().readPropertiesFile();
         int port = Integer.parseInt(props.getProperty("default_serverPort"));
 
@@ -42,6 +47,10 @@ public class ServerThread extends Thread {
         clients = new ArrayList<>();
     }
 
+    public void addListener(ClientsListener clientsListener) {
+        clientsListeners.add(clientsListener);
+    }
+
     @Override
     public void run() {
         while (!serverSocket.isClosed()) {
@@ -51,6 +60,9 @@ public class ServerThread extends Thread {
                 ClientHandlerThread client = new ClientHandlerThread(socket);
                 client.start();
                 clients.add(client);
+                for (ClientsListener clientsListener : clientsListeners) {
+                    clientsListener.onClientConnected();
+                }
                 System.out.println("Client connected!");
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -67,6 +79,7 @@ public class ServerThread extends Thread {
      * @throws IOException if server socket already closed.
      */
     public void stopServerThread() throws IOException {
+        stopClientHandlers();
         serverSocket.close();
     }
 

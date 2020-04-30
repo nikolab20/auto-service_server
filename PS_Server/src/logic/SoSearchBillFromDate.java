@@ -13,7 +13,7 @@ import java.util.Date;
  */
 public class SoSearchBillFromDate extends SystemOperation {
 
-    private Date date;
+    private final Date date;
 
     public SoSearchBillFromDate(Date date) {
         this.date = date;

@@ -9,17 +9,14 @@ package logic;
  *
  * @author nikol
  */
-public class SOGetAllObjectOfSale extends SystemOperation {
+public class SOGetAllCustomers extends SystemOperation {
 
-    private String criteria;
-
-    public SOGetAllObjectOfSale(String criteria) {
+    public SOGetAllCustomers() {
         super();
-        this.criteria = criteria;
     }
 
     @Override
     protected void operation() throws Exception {
-        mapOdo = dbbr.getAllObjectOfSaleWithNames(criteria);
+        listOdo = dbbr.selectAllCustomers();
     }
 }

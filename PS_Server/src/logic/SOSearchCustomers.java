@@ -2,16 +2,15 @@ package logic;
 
 public class SOSearchCustomers extends SystemOperation {
 
-    private String criteria;
+    private final Long customerID;
 
-    public SOSearchCustomers(String criteria) {
+    public SOSearchCustomers(Long customerID) {
         super();
-        this.criteria = criteria;
-        //validator
+        this.customerID = customerID;
     }
 
     @Override
     protected void operation() throws Exception {
-        listOdo = dbbr.searchCustomer(criteria);
+        listOdo = dbbr.searchCustomer(customerID);
     }
 }
