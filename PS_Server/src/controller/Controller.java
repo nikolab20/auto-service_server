@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package controller;
 
 import domain.DomainObject;
@@ -64,7 +59,6 @@ public class Controller {
      * The constructor of this class without any parameters.
      */
     private Controller() {
-
     }
 
     /**
@@ -189,7 +183,8 @@ public class Controller {
     /**
      * Method for calling system operation for customer search.
      *
-     * @param customerID is Long that represents criteria for customer search.
+     * @param customerID is Long value that represents criteria for customer
+     * search.
      * @return list of search clients.
      * @throws Exception if can't work with database.
      */
@@ -215,7 +210,8 @@ public class Controller {
     /**
      * Method for calling system operation for employees search.
      *
-     * @param employeeID is Long that represents criteria for employees search.
+     * @param employeeID is Long value that represents criteria for employees
+     * search.
      * @return list of search employees.
      * @throws Exception if can't work with database.
      */
@@ -239,9 +235,10 @@ public class Controller {
     }
 
     /**
-     * Method for calling system operation that returns all tax from database.
+     * Method for calling system operation that returns all tax rates from
+     * database.
      *
-     * @return list of tax.
+     * @return list of tax rates.
      * @throws Exception if can't work with database.
      */
     public List<DomainObject> getAllTax() throws Exception {
@@ -253,8 +250,9 @@ public class Controller {
     /**
      * Method for calling system operation for car parts search.
      *
-     * @param criteria is String that represents criteria for car parts search.
-     * @return list of search car parts.
+     * @param criteria is Long value that represents criteria for car parts
+     * search.
+     * @return list car parts.
      * @throws Exception if can't work with database.
      */
     public List<DomainObject> searchCarParts(Long criteria) throws Exception {
@@ -266,8 +264,9 @@ public class Controller {
     /**
      * Method for calling system operation for service search.
      *
-     * @param criteria is String that represents criteria for service search.
-     * @return list of search service.
+     * @param criteria is Long value that represents criteria for service
+     * search.
+     * @return list of service.
      * @throws Exception if can't work with database.
      */
     public List<DomainObject> searchService(Long criteria) throws Exception {
@@ -276,92 +275,205 @@ public class Controller {
         return so.getListDomainObject();
     }
 
+    /**
+     * Method for calling system operation for object of sale search.
+     *
+     * @param criteria is Long value that represents criteria for object of sale
+     * search.
+     * @return list of objects of sale.
+     * @throws Exception if can't work with database.
+     */
     public DomainObject searchObjectOfSale(Long criteria) throws Exception {
         SystemOperation so = new SOSearchObjectOfSale(criteria);
         so.execute();
         return so.getDomainObject();
     }
 
+    /**
+     * Method for calling system operation for searching object of sale with
+     * names.
+     *
+     * @param criteria is Long value that represents criteria for object of sale
+     * search.
+     * @return map of objects of sale with names.
+     * @throws Exception if can't work with database.
+     */
     public Map<Object, Object> searchObjectOfSaleWithNames(Long criteria) throws Exception {
         SystemOperation so = new SOSearchObjectOfSale(criteria);
         so.execute();
         return so.getMapDomainObject();
     }
 
+    /**
+     * Method for calling system operation for insert list of objects.
+     *
+     * @param listOdo is list of object for insert to database.
+     * @throws Exception if can't work with database.
+     */
     public void insertListOfDomainObject(List<DomainObject> listOdo) throws Exception {
         SystemOperation so = new SOInsertListOfDomainObject(listOdo);
         so.execute();
     }
 
+    /**
+     * Method for calling system operation for bill search.
+     *
+     * @param criteria is Long value that represents criteria for bill search.
+     * @return list of bills.
+     * @throws Exception if can't work with database.
+     */
     public List<DomainObject> searchBill(Long criteria) throws Exception {
         SystemOperation so = new SOSearchBill(criteria);
         so.execute();
         return so.getListDomainObject();
     }
 
+    /**
+     * Method for calling system operation for bill search from date.
+     *
+     * @param date is Date value that represents criteria for bill search.
+     * @return list of bills.
+     * @throws Exception if can't work with database.
+     */
     public List<DomainObject> searchBillFromDate(Date date) throws Exception {
         SystemOperation so = new SoSearchBillFromDate(date);
         so.execute();
         return so.getListDomainObject();
     }
 
+    /**
+     * Method for calling system operation for client search from date.
+     *
+     * @param date is Date value that represents criteria for clients search.
+     * @return list of clients.
+     * @throws Exception if can't work with database.
+     */
     public List<DomainObject> searchNewClientsFromDate(Date date) throws Exception {
         SystemOperation so = new SOSearchNewClientsFromDate(date);
         so.execute();
         return so.getListDomainObject();
     }
 
+    /**
+     * Method for calling system operation for client with debt search.
+     *
+     * @return list of clients.
+     * @throws Exception if can't work with database.
+     */
     public List<DomainObject> searchClientsWithDebt() throws Exception {
         SystemOperation so = new SOSearchClientsWithDebt();
         so.execute();
         return so.getListDomainObject();
     }
 
+    /**
+     * Method for calling system operation for tax rates search.
+     *
+     * @param id is Long value that represents criteria for tax rates search.
+     * @return list of tax rates.
+     * @throws Exception if can't work with database.
+     */
     public List<DomainObject> searchTax(Long id) throws Exception {
         SystemOperation so = new SOSearchTax(id);
         so.execute();
         return so.getListDomainObject();
     }
 
+    /**
+     * Method for calling system operation for getting all of employees.
+     *
+     * @return list of employees.
+     * @throws Exception if can't work with database.
+     */
     public List<DomainObject> getAllEmployees() throws Exception {
         SystemOperation so = new SOGetAllEmployees();
         so.execute();
         return so.getListDomainObject();
     }
 
+    /**
+     * Method for calling system operation for getting all of car parts.
+     *
+     * @return list of car parts.
+     * @throws Exception if can't work with database.
+     */
     public List<DomainObject> getAllCarParts() throws Exception {
         SystemOperation so = new SOGetAllCarParts();
         so.execute();
         return so.getListDomainObject();
     }
 
+    /**
+     * Method for calling system operation for getting all of services.
+     *
+     * @return list of services.
+     * @throws Exception if can't work with database.
+     */
     public List<DomainObject> getAllServices() throws Exception {
         SystemOperation so = new SOGetAllServices();
         so.execute();
         return so.getListDomainObject();
     }
 
+    /**
+     * Method for calling system operation for getting all of bills.
+     *
+     * @return list of bills.
+     * @throws Exception if can't work with database.
+     */
     public List<DomainObject> getAllBills() throws Exception {
         SystemOperation so = new SOGetAllBills();
         so.execute();
         return so.getListDomainObject();
     }
 
+    /**
+     * Method for calling system operation for getting all of customers.
+     *
+     * @return list of customers.
+     * @throws Exception if can't work with database.
+     */
     public List<DomainObject> getAllCustomers() throws Exception {
         SystemOperation so = new SOGetAllCustomers();
         so.execute();
         return so.getListDomainObject();
     }
 
+    /**
+     * Method for calling system operation for getting all of employees.
+     *
+     * @return list of employees.
+     * @throws Exception if can't work with database.
+     */
     public Map<Object, Object> getAllObjectOfSale() throws Exception {
         SystemOperation so = new SOGetAllOfObjectOfSale();
         so.execute();
         return so.getMapDomainObject();
     }
 
+    /**
+     * Method for calling system operation for checking username.
+     *
+     * @param username is username for check.
+     * @return worker if worker with that username exist.
+     * @throws Exception if can't work with database.
+     */
     public DomainObject checkUsername(String username) throws Exception {
         SystemOperation so = new SOCheckUsername(username);
         so.execute();
         return so.getDomainObject();
+    }
+
+    /**
+     * Method for calling system operation for bill search.
+     *
+     * @param customerId is Long value that represents criteria for bill search.
+     * @return list of bills.
+     * @throws Exception if can't work with database.
+     */
+    public List<DomainObject> searchBillByCustomer(Long customerId) throws Exception {
+        SystemOperation so = new SOSearchBillByCustomer(customerId);
+        so.execute();
+        return so.getListDomainObject();
     }
 }

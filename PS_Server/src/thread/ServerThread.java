@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.function.Consumer;
 import listeners.ClientsListener;
 
 public class ServerThread extends Thread {
@@ -27,6 +28,9 @@ public class ServerThread extends Thread {
     @Getter
     private final List<ClientHandlerThread> clients;
 
+    /**
+     * The list of client listeners.
+     */
     private final List<ClientsListener> clientsListeners;
 
     /**
@@ -47,6 +51,11 @@ public class ServerThread extends Thread {
         clients = new ArrayList<>();
     }
 
+    /**
+     * Method for adding new clients to client listeners list.
+     *
+     * @param clientsListener is client listener to add.
+     */
     public void addListener(ClientsListener clientsListener) {
         clientsListeners.add(clientsListener);
     }
@@ -54,16 +63,14 @@ public class ServerThread extends Thread {
     @Override
     public void run() {
         while (!serverSocket.isClosed()) {
-            System.out.println("Waiting for clients...");
             try {
                 Socket socket = serverSocket.accept();
                 ClientHandlerThread client = new ClientHandlerThread(socket);
                 client.start();
                 clients.add(client);
-                for (ClientsListener clientsListener : clientsListeners) {
+                clientsListeners.forEach((ClientsListener clientsListener) -> {
                     clientsListener.onClientConnected();
-                }
-                System.out.println("Client connected!");
+                });
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -87,12 +94,12 @@ public class ServerThread extends Thread {
      * Method for closing all clients sockets.
      */
     private void stopClientHandlers() {
-        for (ClientHandlerThread client : clients) {
+        clients.forEach((ClientHandlerThread client) -> {
             try {
                 client.getSocket().close();
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-        }
+        });
     }
 }

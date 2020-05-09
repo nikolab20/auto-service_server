@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package logic;
 
 /**
@@ -11,8 +6,16 @@ package logic;
  */
 public class SOSearchEmployees extends SystemOperation {
 
+    /**
+     * Criteria for employees search.
+     */
     private final Long employeeID;
 
+    /**
+     * Parameterized constructor for this system operation.
+     *
+     * @param employeeID is criteria for search.
+     */
     public SOSearchEmployees(Long employeeID) {
         super();
         this.employeeID = employeeID;

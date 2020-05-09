@@ -5,6 +5,11 @@ import validator.impl.ValidatorCustomer;
 
 public class SOUpdateCustomer extends SystemOperation {
 
+    /**
+     * Parameterized constructor for this system operation.
+     * 
+     * @param klijent is customer that user need to update.
+     */
     public SOUpdateCustomer(Klijent klijent) {
         super();
         odo = klijent;

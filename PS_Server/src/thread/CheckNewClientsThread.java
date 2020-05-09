@@ -1,13 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package thread;
 
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import view.tablemodels.TableModelSocket;
 
 /**
@@ -16,9 +9,22 @@ import view.tablemodels.TableModelSocket;
  */
 public class CheckNewClientsThread extends Thread {
 
+    /**
+     * A reference of server thread.
+     */
     private final ServerThread serverThread;
+
+    /**
+     * A reference of socket table model.
+     */
     private final TableModelSocket tms;
 
+    /**
+     * Parameterized constructor of this thread.
+     *
+     * @param serverThread is a reference of server thread.
+     * @param tms is a reference of socket table model.
+     */
     public CheckNewClientsThread(ServerThread serverThread, TableModelSocket tms) {
         this.serverThread = serverThread;
         this.tms = tms;

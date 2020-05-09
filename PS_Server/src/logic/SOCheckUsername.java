@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package logic;
 
 /**
@@ -11,8 +6,16 @@ package logic;
  */
 public class SOCheckUsername extends SystemOperation {
 
+    /**
+     * Username of requested user.
+     */
     private final String username;
 
+    /**
+     * Parameterized constructor for this system operation.
+     *
+     * @param username is username of requested user.
+     */
     public SOCheckUsername(String username) {
         super();
         this.username = username;

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package logic;
 
 /**
@@ -11,8 +6,16 @@ package logic;
  */
 public class SOSearchBill extends SystemOperation {
 
+    /**
+     * Criteria for bills search.
+     */
     private final Long criteria;
 
+    /**
+     * Parameterized constructor for this system operation.
+     *
+     * @param criteria is criteria for search.
+     */
     public SOSearchBill(Long criteria) {
         super();
         this.criteria = criteria;

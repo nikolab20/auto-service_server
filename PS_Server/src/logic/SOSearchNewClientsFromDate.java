@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package logic;
 
 import java.util.Date;
@@ -13,8 +8,16 @@ import java.util.Date;
  */
 public class SOSearchNewClientsFromDate extends SystemOperation {
 
+    /**
+     * Criteria for clients search.
+     */
     private final Date date;
 
+    /**
+     * Parameterized constructor for this system operation.
+     *
+     * @param date is criteria for search.
+     */
     public SOSearchNewClientsFromDate(Date date) {
         super();
         this.date = date;

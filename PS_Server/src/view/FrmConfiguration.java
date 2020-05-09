@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package view;
 
 import controller.Controller;
@@ -22,6 +17,9 @@ import thread.ServerThread;
  */
 public class FrmConfiguration extends javax.swing.JFrame {
 
+    /**
+     * Reference of resource bundle as dictionary.
+     */
     private final ResourceBundle resourceBundle;
 
     /**
@@ -318,6 +316,9 @@ public class FrmConfiguration extends javax.swing.JFrame {
     private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     * Method for form preparation.
+     */
     private void prepareView() {
         URL imageUrl = ClassLoader.getSystemResource("img/transportation.png");
         ImageIcon imageIcon = new ImageIcon(imageUrl);

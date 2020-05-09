@@ -1,8 +1,3 @@
- /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package validator.impl;
 
 import domain.Radnik;
@@ -41,11 +36,11 @@ public class ValidatorEmployee implements Validator {
         if (radnik.getJMBG().length() != 13) {
             throw new ValidationException("JMBG radnika mora imati 13 cifara!");
         }
-        
-        if(radnik.getUsername().length() < 3){
+
+        if (radnik.getUsername().length() < 3) {
             throw new ValidationException("Korisnicko ime radnika mora imati 13 cifara!");
         }
-        
+
         if (radnik.getPassword().length() < 8 && radnik.getPassword().matches("[A-Z]*")) {
             throw new ValidationException("Sifra radnika mora imati bar 8 karaktera i "
                     + "bar jedno veliko slovo!");

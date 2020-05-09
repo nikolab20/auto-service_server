@@ -129,6 +129,15 @@ public class DatabaseBroker {
         }
     }
 
+    /**
+     * Method for search users from a database by specific username and
+     * password.
+     *
+     * @param username is represents username of requested user.
+     * @param password is represents password of requested user.
+     * @return object of Radnik class.
+     * @throws Exception if there are database connection problems.
+     */
     public synchronized DomainObject loginWorker(String username, String password) throws Exception {
         try {
             String query = "SELECT sifraRadnika, imeRadnika, prezimeRadnika, adresa, telefon, JMBG, administrator, "
@@ -160,12 +169,18 @@ public class DatabaseBroker {
 
     }
 
+    /**
+     * Method for initialization objects into database.
+     *
+     * @param odo is represents object that user need to initialize.
+     * @return object with ID set.
+     * @throws Exception if there are database connection problems.
+     */
     public DomainObject initializeDomainObject(DomainObject odo) throws Exception {
         try {
-            String query = "INSERT INTO ? () VALUES ()";
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setString(1, odo.getTableName());
-            statement.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
+            String query = "INSERT INTO " + odo.getTableName() + " () VALUES ()";
+            Statement statement = connection.createStatement();
+            statement.execute(query, Statement.RETURN_GENERATED_KEYS);
 
             ResultSet rs = statement.getGeneratedKeys();
 
@@ -180,14 +195,19 @@ public class DatabaseBroker {
         }
     }
 
+    /**
+     * Method for updating objects from a database.
+     *
+     * @param odo is represents object that user need to update.
+     * @return updated object.
+     * @throws Exception if there are database connection problems.
+     */
     public synchronized DomainObject updateDomainObject(DomainObject odo) throws Exception {
         try {
-            String query = "UPDATE ? SET ? WHERE ? = ?";
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setString(1, odo.getTableName());
-            statement.setString(2, odo.getAttributesForUpdate());
-            statement.setString(3, odo.getIdentifierName());
-            statement.setLong(4, odo.getObjectId());
+            String query = "UPDATE " + odo.getTableName() + " SET "
+                    + odo.getAttributesForUpdate() + " WHERE " + odo.getIdentifierName() + " = "
+                    + odo.getObjectId();
+            Statement statement = connection.createStatement();
             statement.executeUpdate(query);
 
             return odo;
@@ -196,13 +216,20 @@ public class DatabaseBroker {
         }
     }
 
+    /**
+     * Method for searching clients in a database.
+     *
+     * @param customerID is represents criteria for search.
+     * @return list of customers.
+     * @throws Exception if there are database connection problems.
+     */
     public List<DomainObject> searchCustomer(Long customerID) throws Exception {
         try {
-            String query = "SELECT sifraKlijenta, imeKlijenta, prezimeKlijenta, brojPoseta, "
-                    + "dug FROM klijent WHERE sifraKlijenta = ?";
+            String query = "SELECT sifraKlijenta, imeKlijenta, prezimeKlijenta, brojPoseta, dug "
+                    + "FROM klijent WHERE sifraKlijenta = ?";
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setLong(1, customerID);
-            ResultSet rs = statement.executeQuery(query);
+            ResultSet rs = statement.executeQuery();
             List<DomainObject> customers = new ArrayList<>();
 
             while (rs.next()) {
@@ -222,6 +249,13 @@ public class DatabaseBroker {
         }
     }
 
+    /**
+     * Method for searching employees in a database.
+     *
+     * @param employeeID is represents criteria for search.
+     * @return list of employees.
+     * @throws Exception if there are database connection problems.
+     */
     public List<DomainObject> searchEmployees(Long employeeID) throws Exception {
         try {
             String query = "SELECT sifraRadnika, imeRadnika, prezimeRadnika, adresa, "
@@ -230,7 +264,7 @@ public class DatabaseBroker {
 
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setLong(1, employeeID);
-            ResultSet rs = statement.executeQuery(query);
+            ResultSet rs = statement.executeQuery();
             List<DomainObject> radnici = new ArrayList<>();
 
             while (rs.next()) {
@@ -254,15 +288,20 @@ public class DatabaseBroker {
         }
     }
 
+    /**
+     * Method for deleting objects from a database.
+     *
+     * @param odo is represents object that user need to delete.
+     * @return deleted object.
+     * @throws Exception if there are database connection problems.
+     */
     public synchronized DomainObject deleteDomainObject(DomainObject odo) throws Exception {
         try {
-            String query = "DELETE FROM ? WHERE ? = ?";
+            String query = "DELETE FROM " + odo.getTableName() + " WHERE " + odo.getIdentifierName() + " = ?";
 
             PreparedStatement statement = connection.prepareStatement(query);
-            statement.setString(1, odo.getTableName());
-            statement.setString(2, odo.getIdentifierName());
-            statement.setLong(3, odo.getObjectId());
-            statement.executeUpdate(query);
+            statement.setLong(1, odo.getObjectId());
+            statement.executeUpdate();
 
             return odo;
 
@@ -271,14 +310,20 @@ public class DatabaseBroker {
         }
     }
 
+    /**
+     * Method for inserting objects from a database.
+     *
+     * @param odo is represents object that user need to insert.
+     * @return inserted object.
+     * @throws Exception if there are database connection problems.
+     */
     public DomainObject insertDomainObject(DomainObject odo) throws Exception {
         try {
-            String query = "INSERT INTO ? (?) VALUES (?)";
+            String query = "INSERT INTO " + odo.getTableName() + " ("
+                    + odo.getAttributeNamesForInsert() + ") VALUES ("
+                    + odo.getAttributeValuesForInsert() + ")";
 
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setString(1, odo.getTableName());
-            statement.setString(2, odo.getAttributeNamesForInsert());
-            statement.setString(3, odo.getAttributeValuesForInsert());
+            Statement statement = connection.prepareStatement(query);
             statement.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
             ResultSet rs = statement.getGeneratedKeys();
 
@@ -297,6 +342,12 @@ public class DatabaseBroker {
         }
     }
 
+    /**
+     * Method for getting all tax rates from a database.
+     *
+     * @return a list of tax rates.
+     * @throws Exception if there are database connection problems.
+     */
     public List<DomainObject> selectAllTax() throws Exception {
         try {
             String query = "SELECT id, oznaka, vrednost FROM poreskastopa";
@@ -322,6 +373,12 @@ public class DatabaseBroker {
         }
     }
 
+    /**
+     * Method for getting all customers from a database.
+     *
+     * @return a list of customers.
+     * @throws Exception if there are database connection problems.
+     */
     public List<DomainObject> selectAllCustomers() throws Exception {
         try {
             String query = "SELECT sifraKlijenta, imeKlijenta, prezimeKlijenta, brojPoseta, dug FROM klijent";
@@ -347,6 +404,12 @@ public class DatabaseBroker {
         }
     }
 
+    /**
+     * Method for getting all employees from a database.
+     *
+     * @return a list of employees.
+     * @throws Exception if there are database connection problems.
+     */
     public List<DomainObject> selectAllEmployees() throws Exception {
         try {
             String query = "SELECT sifraRadnika, imeRadnika, prezimeRadnika, adresa, "
@@ -377,6 +440,12 @@ public class DatabaseBroker {
         }
     }
 
+    /**
+     * Method for getting all car parts from a database.
+     *
+     * @return a list of car parts.
+     * @throws Exception if there are database connection problems.
+     */
     public List<DomainObject> selectAllCarParts() throws Exception {
         try {
             String query = "SELECT d.serijskiBroj, d.nazivDela, d.proizvodjac, "
@@ -419,6 +488,12 @@ public class DatabaseBroker {
         }
     }
 
+    /**
+     * Method for getting all services from a database.
+     *
+     * @return a list of services.
+     * @throws Exception if there are database connection problems.
+     */
     public List<DomainObject> selectAllServices() throws Exception {
         try {
             String query = "SELECT u.sifraUsluge, u.nazivUsluge, u.opisUsluge, u.sifraPredmetaProdaje, pp.sifraPredmetaProdaje, "
@@ -458,6 +533,12 @@ public class DatabaseBroker {
         }
     }
 
+    /**
+     * Method for getting all bills from a database.
+     *
+     * @return a list of bills.
+     * @throws Exception if there are database connection problems.
+     */
     public List<DomainObject> selectAllBill() throws Exception {
         try {
             String query = "SELECT r.brojRacuna, r.datumIzdavanja, r.ukupnaVrednost,"
@@ -510,6 +591,13 @@ public class DatabaseBroker {
         }
     }
 
+    /**
+     * Method for searching cart parts in a database.
+     *
+     * @param criteria is represents criteria for search.
+     * @return list of car parts.
+     * @throws Exception if there are database connection problems.
+     */
     public List<DomainObject> searchCarPart(Long criteria) throws Exception {
         try {
             String query = "SELECT d.serijskiBroj, d.nazivDela, d.proizvodjac, "
@@ -522,7 +610,7 @@ public class DatabaseBroker {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setLong(1, criteria);
             statement.setLong(2, criteria);
-            ResultSet rs = statement.executeQuery(query);
+            ResultSet rs = statement.executeQuery();
             List<DomainObject> parts = new ArrayList<>();
 
             while (rs.next()) {
@@ -555,10 +643,17 @@ public class DatabaseBroker {
         }
     }
 
+    /**
+     * Method for searching services in a database.
+     *
+     * @param criteria is represents criteria for search.
+     * @return list of services.
+     * @throws Exception if there are database connection problems.
+     */
     public List<DomainObject> searchService(Long criteria) throws Exception {
         try {
-            String query = "SELECT u.sifraUsluge, u.nazivUsluge, u.opisUsluge, u.sifraPredmetaProdaje, pp.sifraPredmetaProdaje, "
-                    + "pp.cena, pp.cenaSaPorezom, pp.id, ps.id, ps.oznaka, ps.vrednost "
+            String query = "SELECT u.sifraUsluge, u.nazivUsluge, u.opisUsluge, u.sifraPredmetaProdaje, "
+                    + "pp.sifraPredmetaProdaje, pp.cena, pp.cenaSaPorezom, pp.id, ps.id, ps.oznaka, ps.vrednost "
                     + "FROM usluga u JOIN predmetProdaje pp on (u.sifraPredmetaProdaje = pp.sifraPredmetaProdaje) "
                     + "JOIN poreskaStopa ps on (pp.id = ps.id) WHERE u.sifraPredmetaProdaje = ?"
                     + " OR u.sifraUsluge = ?";
@@ -566,7 +661,7 @@ public class DatabaseBroker {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setLong(1, criteria);
             statement.setLong(2, criteria);
-            ResultSet rs = statement.executeQuery(query);
+            ResultSet rs = statement.executeQuery();
             List<DomainObject> services = new ArrayList<>();
 
             while (rs.next()) {
@@ -597,15 +692,23 @@ public class DatabaseBroker {
         }
     }
 
+    /**
+     * Method for searching objects of sale in a database.
+     *
+     * @param criteria is represents criteria for search.
+     * @return list of object of sale.
+     * @throws Exception if there are database connection problems.
+     */
     public synchronized DomainObject searchObjectOfSale(Long criteria) throws Exception {
         try {
-            String query = "SELECT pp.sifraPredmetaProdaje as 'pp_sifra', pp.cena as 'pp_cena', pp.cenaSaPorezom as 'pp_cenaSaP', "
-                    + "pp.id as 'pp_id', ps.id as 'ps_id', ps.oznaka as 'ps_oznaka', ps.vrednost as 'ps_vrednost' FROM predmetProdaje pp JOIN"
+            String query = "SELECT pp.sifraPredmetaProdaje as 'pp_sifra', pp.cena as 'pp_cena', "
+                    + "pp.cenaSaPorezom as 'pp_cenaSaP', pp.id as 'pp_id', ps.id as 'ps_id', ps.oznaka "
+                    + "as 'ps_oznaka', ps.vrednost as 'ps_vrednost' FROM predmetProdaje pp JOIN"
                     + " poreskaStopa ps on (pp.id = ps.id) WHERE pp.sifraPredmetaProdaje = ?";
 
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setLong(1, criteria);
-            ResultSet rs = statement.executeQuery(query);
+            ResultSet rs = statement.executeQuery();
             PredmetProdaje predmetProdaje = new PredmetProdaje();
 
             while (rs.next()) {
@@ -626,6 +729,12 @@ public class DatabaseBroker {
         }
     }
 
+    /**
+     * Method for getting all objects of sale with names from a database.
+     *
+     * @return a map with key-value par (objectOfSale, name).
+     * @throws Exception if there are database connection problems.
+     */
     public synchronized Map<Object, Object> getAllObjectOfSaleWithNames() throws Exception {
         try {
             String query = "SELECT p.sifraPredmetaProdaje AS 'ID', p.`cena` AS 'Cena', "
@@ -664,6 +773,13 @@ public class DatabaseBroker {
         }
     }
 
+    /**
+     * Method for searching objects of sale with names in a database.
+     *
+     * @param criteria is represents criteria for search.
+     * @return a map with key-value par (objectOfSale, name).
+     * @throws Exception if there are database connection problems.
+     */
     public synchronized Map<Object, Object> searchObjectOfSaleWithNames(String criteria) throws Exception {
         try {
             String query = "SELECT p.sifraPredmetaProdaje AS 'ID', p.`cena` AS 'Cena', "
@@ -684,7 +800,7 @@ public class DatabaseBroker {
             statement.setString(1, criteria);
             statement.setString(2, criteria);
             statement.setString(3, criteria);
-            ResultSet rs = statement.executeQuery(query);
+            ResultSet rs = statement.executeQuery();
             Map<Object, Object> map = new HashMap<>();
 
             while (rs.next()) {
@@ -708,15 +824,20 @@ public class DatabaseBroker {
         }
     }
 
+    /**
+     * Method for inserting list of objects from a database.
+     *
+     * @param listOdo is represents list of object that user need to insert.
+     * @throws Exception if there are database connection problems.
+     */
     public void insertListOfDomainObject(List<DomainObject> listOdo) throws Exception {
         try {
             for (DomainObject domainObject : listOdo) {
-                String query = "INSERT INTO ? (?) VALUES (?)";
+                String query = "INSERT INTO " + domainObject.getTableName()
+                        + " (" + domainObject.getAttributeNamesForInsert() + ") VALUES "
+                        + "(" + domainObject.getAttributeValuesForInsert() + ")";
 
-                PreparedStatement statement = connection.prepareStatement(query);
-                statement.setString(1, domainObject.getTableName());
-                statement.setString(2, domainObject.getAttributeNamesForInsert());
-                statement.setString(3, domainObject.getAttributeValuesForInsert());
+                Statement statement = connection.createStatement();
                 statement.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
                 ResultSet rs = statement.getGeneratedKeys();
 
@@ -734,6 +855,13 @@ public class DatabaseBroker {
         }
     }
 
+    /**
+     * Method for searching bills in a database.
+     *
+     * @param criteria is represents criteria for search.
+     * @return list of bills.
+     * @throws Exception if there are database connection problems.
+     */
     public List<DomainObject> searchBill(Long criteria) throws Exception {
         try {
             String query = "SELECT r.brojRacuna, r.datumIzdavanja, r.ukupnaVrednost,"
@@ -742,12 +870,11 @@ public class DatabaseBroker {
                     + "ra.administrator, ra.username, ra.password, k.sifraKlijenta, k.imeKlijenta, "
                     + "k.prezimeKlijenta, k.brojPoseta, k.dug FROM racun r JOIN radnik ra ON "
                     + "(r.sifraRadnika = ra.sifraRadnika) JOIN klijent k ON (r.sifraKlijenta = k.sifraKlijenta)"
-                    + "WHERE r.brojRacuna = ? OR k.sifraKlijenta = ?";
+                    + "WHERE r.brojRacuna = ?";
 
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setLong(1, criteria);
-            statement.setLong(2, criteria);
-            ResultSet rs = statement.executeQuery(query);
+            ResultSet rs = statement.executeQuery();
             List<DomainObject> bills = new ArrayList<>();
 
             while (rs.next()) {
@@ -788,6 +915,13 @@ public class DatabaseBroker {
         }
     }
 
+    /**
+     * Method for searching bills from date in a database.
+     *
+     * @param date is represents date criteria for search.
+     * @return list of bills.
+     * @throws Exception if there are database connection problems.
+     */
     public List<DomainObject> searchBillFromDate(java.util.Date date) throws Exception {
         try {
             String query = "SELECT r.brojRacuna, r.datumIzdavanja, r.ukupnaVrednost,"
@@ -800,7 +934,7 @@ public class DatabaseBroker {
 
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setDate(1, new Date(date.getTime()));
-            ResultSet rs = statement.executeQuery(query);
+            ResultSet rs = statement.executeQuery();
             List<DomainObject> bills = new ArrayList<>();
 
             while (rs.next()) {
@@ -841,6 +975,13 @@ public class DatabaseBroker {
         }
     }
 
+    /**
+     * Method for searching new clients from date in a database.
+     *
+     * @param date is represents date criteria for search.
+     * @return list of clients.
+     * @throws Exception if there are database connection problems.
+     */
     public List<DomainObject> searchNewClientsFromDate(java.util.Date date) throws Exception {
         try {
             String query = "SELECT k.sifraKlijenta, k.imeKlijenta, k.prezimeKlijenta, k.brojPoseta, "
@@ -850,7 +991,7 @@ public class DatabaseBroker {
 
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setDate(1, new Date(date.getTime()));
-            ResultSet rs = statement.executeQuery(query);
+            ResultSet rs = statement.executeQuery();
             List<DomainObject> clients = new ArrayList<>();
 
             while (rs.next()) {
@@ -870,10 +1011,16 @@ public class DatabaseBroker {
         }
     }
 
+    /**
+     * Method for searching clients with debt in a database.
+     *
+     * @return list of clients.
+     * @throws Exception if there are database connection problems.
+     */
     public List<DomainObject> searchClientsWithDebt() throws Exception {
         try {
             String query = "SELECT k.sifraKlijenta, k.imeKlijenta, k.prezimeKlijenta, k.brojPoseta, "
-                    + "k.dug FROM racun r JOIN klijent k ON (r.sifraKlijenta = k.sifraKlijenta) WHERE "
+                    + "k.dug FROM klijent k  WHERE "
                     + "k.dug > 0 ORDER BY k.dug DESC";
 
             Statement statement = connection.createStatement();
@@ -897,6 +1044,13 @@ public class DatabaseBroker {
         }
     }
 
+    /**
+     * Method for searching tax rates in a database.
+     *
+     * @param id is represents criteria for search.
+     * @return list of tax rates.
+     * @throws Exception if there are database connection problems.
+     */
     public List<DomainObject> searchTax(Long id) throws Exception {
         try {
             String query = "SELECT id, oznaka, vrednost FROM poreskaStopa "
@@ -904,7 +1058,7 @@ public class DatabaseBroker {
 
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setLong(1, id);
-            ResultSet rs = statement.executeQuery(query);
+            ResultSet rs = statement.executeQuery();
             List<DomainObject> tax = new ArrayList<>();
 
             while (rs.next()) {
@@ -922,6 +1076,13 @@ public class DatabaseBroker {
         }
     }
 
+    /**
+     * Method for searching user in a database by specific username.
+     *
+     * @param username is represents criteria for search.
+     * @return object of Klijent class.
+     * @throws Exception if there are database connection problems.
+     */
     public synchronized DomainObject checkUsername(String username) throws Exception {
         try {
             String query = "SELECT sifraRadnika, imeRadnika, prezimeRadnika, adresa, telefon, JMBG, administrator, "
@@ -948,6 +1109,66 @@ public class DatabaseBroker {
             return radnik;
         } catch (SQLException ex) {
             throw new Exception(resourceBundle.getString("database_select_exception") + " radnik");
+        }
+    }
+
+    /**
+     * Method for searching bills in a database.
+     *
+     * @param customerId is represents id of customer for bill search.
+     * @return list of bills.
+     * @throws Exception if there are database connection problems.
+     */
+    public List<DomainObject> searchBillByCustomerId(Long customerId) throws Exception {
+        try {
+            String query = "SELECT r.brojRacuna, r.datumIzdavanja, r.ukupnaVrednost,"
+                    + " r.ukupnaVrednostSaPorezom, r.obradjen, r.storniran, ra.sifraRadnika, "
+                    + "ra.imeRadnika, ra.PrezimeRadnika, ra.adresa, ra.telefon, ra.JMBG, "
+                    + "ra.administrator, ra.username, ra.password, k.sifraKlijenta, k.imeKlijenta, "
+                    + "k.prezimeKlijenta, k.brojPoseta, k.dug FROM racun r JOIN radnik ra ON "
+                    + "(r.sifraRadnika = ra.sifraRadnika) JOIN klijent k ON (r.sifraKlijenta = k.sifraKlijenta)"
+                    + "WHERE k.sifraKlijenta = ?";
+
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setLong(1, customerId);
+            ResultSet rs = statement.executeQuery();
+            List<DomainObject> bills = new ArrayList<>();
+
+            while (rs.next()) {
+                Klijent klijent = new Klijent();
+                klijent.setSifraKlijenta(rs.getLong("k.sifraKlijenta"));
+                klijent.setImeKlijenta(rs.getString("k.imeKlijenta"));
+                klijent.setPrezimeKlijenta(rs.getString("k.prezimeKlijenta"));
+                klijent.setBrojPoseta(rs.getInt("k.brojPoseta"));
+                klijent.setDug(rs.getBigDecimal("k.dug"));
+
+                Radnik radnik = new Radnik();
+                radnik.setSifraRadnika(rs.getLong("ra.sifraRadnika"));
+                radnik.setImeRadnika(rs.getString("ra.imeRadnika"));
+                radnik.setPrezimeRadnika(rs.getString("ra.prezimeRadnika"));
+                radnik.setAdresa(rs.getString("ra.adresa"));
+                radnik.setTelefon(rs.getString("ra.telefon"));
+                radnik.setJMBG(rs.getString("ra.JMBG"));
+                radnik.setAdministrator(rs.getBoolean("ra.administrator"));
+                radnik.setUsername(rs.getString("ra.username"));
+                radnik.setPassword(rs.getString("ra.password"));
+
+                Racun racun = new Racun();
+                racun.setBrojRacuna(rs.getLong("r.brojRacuna"));
+                racun.setDatumIzdavanja(new java.util.Date(rs.getDate("r.datumIzdavanja").getTime()));
+                racun.setUkupnaVrednost(rs.getBigDecimal("r.ukupnaVrednost"));
+                racun.setUkupnaVrednostSaPorezom(rs.getBigDecimal("r.ukupnaVrednostSaPorezom"));
+                racun.setObradjen(rs.getBoolean("r.obradjen"));
+                racun.setStorniran(rs.getBoolean("r.storniran"));
+                racun.setKlijent(klijent);
+                racun.setRadnik(radnik);
+
+                bills.add(racun);
+            }
+
+            return bills;
+        } catch (SQLException ex) {
+            throw new Exception(resourceBundle.getString("database_select_exception") + " racun");
         }
     }
 }

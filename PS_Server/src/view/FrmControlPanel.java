@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package view;
 
 import controller.Controller;
@@ -23,13 +18,29 @@ import view.tablemodels.TableModelSocket;
  */
 public final class FrmControlPanel extends javax.swing.JFrame implements ClientsListener {
 
+    /**
+     * Reference of server thread.
+     */
     private ServerThread serverThread;
+
+    /**
+     * Reference of socket table model.
+     */
     private TableModelSocket tms;
+
+    /**
+     * Reference of CheckNewClientsThread thread.
+     */
     private CheckNewClientsThread checkNewClientsThread;
+
+    /**
+     * Reference of resource bundle as dictionary.
+     */
     private ResourceBundle resourceBundle;
 
     /**
      * Creates new form FrmControlPanel
+     *
      * @param serverThread
      */
     public FrmControlPanel(ServerThread serverThread) {
@@ -229,6 +240,9 @@ public final class FrmControlPanel extends javax.swing.JFrame implements Clients
     private javax.swing.JTable tableConnections;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     * Method for form preparation.
+     */
     public void preparePanel() {
         resourceBundle = ResourceBundle.getBundle("props/LanguageBundle", Controller.getInstance().getLocale());
 
@@ -248,6 +262,9 @@ public final class FrmControlPanel extends javax.swing.JFrame implements Clients
         checkNewClientsThread.start();
     }
 
+    /**
+     * Method for "cleaning" form.
+     */
     public void clearPanel() {
         tms.updateTable(new ArrayList<>());
     }

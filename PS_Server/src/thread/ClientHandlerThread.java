@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package thread;
 
 import controller.Controller;
@@ -22,8 +17,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author nikol
@@ -54,7 +47,7 @@ public class ClientHandlerThread extends Thread {
      */
     public ClientHandlerThread(Socket socket) {
         this.socket = socket;
-        this.setName("Not logged in");
+        this.setName("/");
     }
 
     @Override
@@ -144,6 +137,9 @@ public class ClientHandlerThread extends Thread {
                     case Operation.OPERATION_SELECT_ALL_OBJECT_OF_SALE:
                         response = operationGetAllObjectOfSale(request);
                         break;
+                    case Operation.OPERATION_SEARCH_BILL_BY_CUSTOMER:
+                        response = operationSearchBillByCustomer(request);
+                        break;
                 }
                 if (request.getOperation() != Operation.OPERATION_DISCONNECT) {
                     sendResponse(response);
@@ -184,7 +180,7 @@ public class ClientHandlerThread extends Thread {
      *
      * @param request is an object with number of operation and data that sent
      * from client.
-     * @return An object of class {@link ResponseObject}.
+     * @return an object of class ResponseObject.
      */
     private ResponseObject operationChooseLanguage(RequestObject request) {
         ResponseObject response;
@@ -196,6 +192,13 @@ public class ClientHandlerThread extends Thread {
         return response;
     }
 
+    /**
+     * Method for processing client's request for logging user.
+     *
+     * @param request is an object with number of operation and data that sent
+     * from client.
+     * @return an object of class ResponseObject.
+     */
     private ResponseObject operationLoginWorker(RequestObject request) {
         ResponseObject response = null;
         Map<String, String> data = (Map) request.getData();
@@ -214,6 +217,13 @@ public class ClientHandlerThread extends Thread {
         return response;
     }
 
+    /**
+     * Method for processing client's request for initialization domain object.
+     *
+     * @param request is an object with number of operation and data that sent
+     * from client.
+     * @return an object of class ResponseObject.
+     */
     private ResponseObject operationGenerate(RequestObject request) {
         ResponseObject response = null;
         DomainObject odo = (DomainObject) request.getData();
@@ -229,6 +239,13 @@ public class ClientHandlerThread extends Thread {
         return response;
     }
 
+    /**
+     * Method for processing client's request for inserting domain object.
+     *
+     * @param request is an object with number of operation and data that sent
+     * from client.
+     * @return an object of class ResponseObject.
+     */
     private ResponseObject operationInsert(RequestObject request) {
         ResponseObject response = null;
         DomainObject odo = (DomainObject) request.getData();
@@ -244,6 +261,13 @@ public class ClientHandlerThread extends Thread {
         return response;
     }
 
+    /**
+     * Method for processing client's request for customer search.
+     *
+     * @param request is an object with number of operation and data that sent
+     * from client.
+     * @return an object of class ResponseObject.
+     */
     private ResponseObject operationSearchCustomers(RequestObject request) {
         ResponseObject response = null;
         Long customerID = (Long) request.getData();
@@ -259,6 +283,13 @@ public class ClientHandlerThread extends Thread {
         return response;
     }
 
+    /**
+     * Method for processing client's request for update domain object.
+     *
+     * @param request is an object with number of operation and data that sent
+     * from client.
+     * @return an object of class ResponseObject.
+     */
     private ResponseObject operationUpdate(RequestObject request) {
         ResponseObject response = null;
         DomainObject odo = (DomainObject) request.getData();
@@ -274,6 +305,13 @@ public class ClientHandlerThread extends Thread {
         return response;
     }
 
+    /**
+     * Method for processing client's request for employees search.
+     *
+     * @param request is an object with number of operation and data that sent
+     * from client.
+     * @return an object of class ResponseObject.
+     */
     private ResponseObject operationSearchEmployees(RequestObject request) {
         ResponseObject response = null;
         Long employeeID = (Long) request.getData();
@@ -289,6 +327,13 @@ public class ClientHandlerThread extends Thread {
         return response;
     }
 
+    /**
+     * Method for processing client's request for delete domain object.
+     *
+     * @param request is an object with number of operation and data that sent
+     * from client.
+     * @return an object of class ResponseObject.
+     */
     private ResponseObject operationDelete(RequestObject request) {
         ResponseObject response = null;
         DomainObject odo = (DomainObject) request.getData();
@@ -304,6 +349,13 @@ public class ClientHandlerThread extends Thread {
         return response;
     }
 
+    /**
+     * Method for processing client's request for getting all of tax rates.
+     *
+     * @param request is an object with number of operation and data that sent
+     * from client.
+     * @return an object of class ResponseObject.
+     */
     private ResponseObject operationGetAllTax(RequestObject request) {
         ResponseObject response = null;
 
@@ -318,6 +370,13 @@ public class ClientHandlerThread extends Thread {
         return response;
     }
 
+    /**
+     * Method for processing client's request for car parts search.
+     *
+     * @param request is an object with number of operation and data that sent
+     * from client.
+     * @return an object of class ResponseObject.
+     */
     private ResponseObject operationSearchCarPart(RequestObject request) {
         ResponseObject response = null;
         Long criteria = (Long) request.getData();
@@ -333,6 +392,13 @@ public class ClientHandlerThread extends Thread {
         return response;
     }
 
+    /**
+     * Method for processing client's request for services search.
+     *
+     * @param request is an object with number of operation and data that sent
+     * from client.
+     * @return an object of class ResponseObject.
+     */
     private ResponseObject operationSearchService(RequestObject request) {
         ResponseObject response = null;
         Long criteria = (Long) request.getData();
@@ -348,6 +414,13 @@ public class ClientHandlerThread extends Thread {
         return response;
     }
 
+    /**
+     * Method for processing client's request for object of sale search.
+     *
+     * @param request is an object with number of operation and data that sent
+     * from client.
+     * @return an object of class ResponseObject.
+     */
     private ResponseObject operationSearchObjectOfSale(RequestObject request) {
         ResponseObject response = null;
         Long criteria = (Long) request.getData();
@@ -363,6 +436,13 @@ public class ClientHandlerThread extends Thread {
         return response;
     }
 
+    /**
+     * Method for processing client's request for objects of sale search.
+     *
+     * @param request is an object with number of operation and data that sent
+     * from client.
+     * @return an object of class ResponseObject.
+     */
     private ResponseObject operationSearchObjectOfSales(RequestObject request) {
         ResponseObject response = null;
         Long criteria = (Long) request.getData();
@@ -378,6 +458,13 @@ public class ClientHandlerThread extends Thread {
         return response;
     }
 
+    /**
+     * Method for processing client's request for insert list of domain object.
+     *
+     * @param request is an object with number of operation and data that sent
+     * from client.
+     * @return an object of class ResponseObject.
+     */
     private ResponseObject operationInsertListOfDomainObject(RequestObject request) {
         ResponseObject response = null;
         List<DomainObject> listOdo = (List<DomainObject>) request.getData();
@@ -393,6 +480,13 @@ public class ClientHandlerThread extends Thread {
         return response;
     }
 
+    /**
+     * Method for processing client's request for bills search.
+     *
+     * @param request is an object with number of operation and data that sent
+     * from client.
+     * @return an object of class ResponseObject.
+     */
     private ResponseObject operationSearchBill(RequestObject request) {
         ResponseObject response = null;
         Long criteria = (Long) request.getData();
@@ -408,6 +502,14 @@ public class ClientHandlerThread extends Thread {
         return response;
     }
 
+    /**
+     * Method for processing client's request for bills search from specific
+     * date.
+     *
+     * @param request is an object with number of operation and data that sent
+     * from client.
+     * @return an object of class ResponseObject.
+     */
     private ResponseObject operationSearchBillFromDate(RequestObject request) {
         ResponseObject response = null;
         Date date = (Date) request.getData();
@@ -423,6 +525,14 @@ public class ClientHandlerThread extends Thread {
         return response;
     }
 
+    /**
+     * Method for processing client's request for new clients search from
+     * specific date.
+     *
+     * @param request is an object with number of operation and data that sent
+     * from client.
+     * @return an object of class ResponseObject.
+     */
     private ResponseObject operationSearchNewClixentsFromDate(RequestObject request) {
         ResponseObject response = null;
         Date date = (Date) request.getData();
@@ -438,6 +548,13 @@ public class ClientHandlerThread extends Thread {
         return response;
     }
 
+    /**
+     * Method for processing client's request for clients with debt search.
+     *
+     * @param request is an object with number of operation and data that sent
+     * from client.
+     * @return an object of class ResponseObject.
+     */
     private ResponseObject operationSearchClientsWithDebt(RequestObject request) {
         ResponseObject response = null;
 
@@ -452,6 +569,13 @@ public class ClientHandlerThread extends Thread {
         return response;
     }
 
+    /**
+     * Method for processing client's request for tax rates search.
+     *
+     * @param request is an object with number of operation and data that sent
+     * from client.
+     * @return an object of class ResponseObject.
+     */
     private ResponseObject operationSearchTax(RequestObject request) {
         ResponseObject response = null;
         Long id = (Long) request.getData();
@@ -467,6 +591,12 @@ public class ClientHandlerThread extends Thread {
         return response;
     }
 
+    /**
+     * Method for processing client's request for disconnection.
+     *
+     * @param request is an object with number of operation and data that sent
+     * from client.
+     */
     private void operationDisconnect(RequestObject request) {
         try {
             socket.close();
@@ -475,6 +605,13 @@ public class ClientHandlerThread extends Thread {
         }
     }
 
+    /**
+     * Method for processing client's request for getting all of customers.
+     *
+     * @param request is an object with number of operation and data that sent
+     * from client.
+     * @return an object of class ResponseObject.
+     */
     private ResponseObject operationGetAllCustomers(RequestObject request) {
         ResponseObject response = null;
 
@@ -489,6 +626,13 @@ public class ClientHandlerThread extends Thread {
         return response;
     }
 
+    /**
+     * Method for processing client's request for getting all of bills.
+     *
+     * @param request is an object with number of operation and data that sent
+     * from client.
+     * @return an object of class ResponseObject.
+     */
     private ResponseObject operationGetAllBills(RequestObject request) {
         ResponseObject response = null;
 
@@ -503,6 +647,13 @@ public class ClientHandlerThread extends Thread {
         return response;
     }
 
+    /**
+     * Method for processing client's request for getting all of employees.
+     *
+     * @param request is an object with number of operation and data that sent
+     * from client.
+     * @return an object of class ResponseObject.
+     */
     private ResponseObject operationGetAllEmployees(RequestObject request) {
         ResponseObject response = null;
 
@@ -517,6 +668,13 @@ public class ClientHandlerThread extends Thread {
         return response;
     }
 
+    /**
+     * Method for processing client's request for getting all of car parts.
+     *
+     * @param request is an object with number of operation and data that sent
+     * from client.
+     * @return an object of class ResponseObject.
+     */
     private ResponseObject operationGetAllCarParts(RequestObject request) {
         ResponseObject response = null;
 
@@ -531,6 +689,13 @@ public class ClientHandlerThread extends Thread {
         return response;
     }
 
+    /**
+     * Method for processing client's request for getting all of services.
+     *
+     * @param request is an object with number of operation and data that sent
+     * from client.
+     * @return an object of class ResponseObject.
+     */
     private ResponseObject operationGetAllServices(RequestObject request) {
         ResponseObject response = null;
 
@@ -545,6 +710,14 @@ public class ClientHandlerThread extends Thread {
         return response;
     }
 
+    /**
+     * Method for processing client's request for getting all of objects of
+     * sales.
+     *
+     * @param request is an object with number of operation and data that sent
+     * from client.
+     * @return an object of class ResponseObject.
+     */
     private ResponseObject operationGetAllObjectOfSale(RequestObject request) {
         ResponseObject response = null;
 
@@ -552,6 +725,28 @@ public class ClientHandlerThread extends Thread {
             response = new ResponseObject();
             Map<Object, Object> objects = Controller.getInstance().getAllObjectOfSale();
             response.setData(objects);
+        } catch (Exception ex) {
+            response.setException(ex);
+        }
+
+        return response;
+    }
+
+    /**
+     * Method for processing client's request for bills search.
+     *
+     * @param request is an object with number of operation and data that sent
+     * from client.
+     * @return an object of class ResponseObject.
+     */
+    private ResponseObject operationSearchBillByCustomer(RequestObject request) {
+        ResponseObject response = null;
+        Long criteria = (Long) request.getData();
+
+        try {
+            response = new ResponseObject();
+            List<DomainObject> bills = Controller.getInstance().searchBillByCustomer(criteria);
+            response.setData(bills);
         } catch (Exception ex) {
             response.setException(ex);
         }

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package logic;
 
 import domain.DomainObject;
@@ -14,6 +9,11 @@ import java.util.List;
  */
 public class SOInsertListOfDomainObject extends SystemOperation {
 
+    /**
+     * Parameterized constructor for this system operation.
+     *
+     * @param listOdo is list object that user need to insert.
+     */
     public SOInsertListOfDomainObject(List<DomainObject> listOdo) {
         this.listOdo = listOdo;
     }

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package logic;
 
 import domain.DomainObject;
@@ -13,6 +8,11 @@ import domain.DomainObject;
  */
 public class SODeleteDomainObject extends SystemOperation {
 
+    /**
+     * Parameterized constructor for this system operation.
+     *
+     * @param odo is object that user need to delete.
+     */
     public SODeleteDomainObject(DomainObject odo) {
         super();
         this.odo = odo;

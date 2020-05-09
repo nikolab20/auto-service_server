@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package view.tablemodels;
 
 import controller.Controller;
@@ -17,10 +12,26 @@ import thread.ClientHandlerThread;
  */
 public class TableModelSocket extends AbstractTableModel {
 
+    /**
+     * List of data which represented in table.
+     */
     private List<ClientHandlerThread> clients;
+
+    /**
+     * Array of strings that represents names of columns.
+     */
     private final String[] columnNames;
+
+    /**
+     * Reference of resource bundle as dictionary.
+     */
     private final ResourceBundle resourceBundle;
 
+    /**
+     * Parameterized constructor of that table model.
+     *
+     * @param clients is list of data which represented in table.
+     */
     public TableModelSocket(List<ClientHandlerThread> clients) {
         this.clients = clients;
         resourceBundle = ResourceBundle.getBundle("props/LanguageBundle", Controller.getInstance().getLocale());
@@ -61,6 +72,11 @@ public class TableModelSocket extends AbstractTableModel {
         return columnNames[column];
     }
 
+    /**
+     * Method for updating data into a table.
+     *
+     * @param clients is updated list of data for table.
+     */
     public void updateTable(List<ClientHandlerThread> clients) {
         this.clients = clients;
         fireTableDataChanged();

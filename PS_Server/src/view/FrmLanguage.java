@@ -88,7 +88,7 @@ public class FrmLanguage extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     /**
-     * Method for preparing form for use.
+     * Method for form preparation.
      */
     private void prepareView() {
         URL imageUrl = ClassLoader.getSystemResource("img/transportation.png");
